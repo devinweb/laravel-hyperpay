@@ -1,0 +1,20 @@
+<?php
+
+namespace DummyNamespace;
+
+use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
+
+class DummyClass implements BillingInterface
+{
+    /**
+     * Get the billing data.
+     *
+     * @return array
+     */
+    public function getBillingData(): array
+    {
+        return [
+            //
+        ];
+    }
+}

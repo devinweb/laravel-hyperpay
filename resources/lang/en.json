@@ -1,0 +1,6 @@
+{
+    "failed_message": "(Transaction Error) Error processing payment.",
+    "The payment was successful.": "The payment was successful.",
+    "This payment was already successfully confirmed.": "This payment was already successfully confirmed.",
+    "This payment was cancelled.": "This payment was cancelled."
+}

@@ -3,18 +3,19 @@
 namespace Devinweb\LaravelHyperpay\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 
 interface Hyperpay
 {
     /**
      *
      */
-    public function getCheckoutId(Model $user, $amount);
+    public function checkout(Model $user, $amount, $brand, Request $request);
 
     /**
      *
      */
-    public function getPaymentStatus(string $resourcePath, string $brand);
+    public function paymentStatus(string $resourcePath, string $brand);
 
     /**
      *
@@ -26,7 +27,7 @@ interface Hyperpay
      */
     public function getMessageFromError(array $response) : ?string;
 
-    public function prepareCheckout(Model $user, $amount);
     public function pending();
+
     public function merchantTransactionId();
 }

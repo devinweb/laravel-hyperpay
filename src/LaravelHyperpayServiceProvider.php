@@ -3,9 +3,9 @@
 namespace Devinweb\LaravelHyperpay;
 
 use Devinweb\LaravelHyperpay\Console\BillingCommand;
-use Devinweb\LaravelHyperpay\Contracts\Brand\BrandInterface;
 use Illuminate\Support\ServiceProvider;
 use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Support\Facades\Route;
 
 class LaravelHyperpayServiceProvider extends ServiceProvider
 {
@@ -14,37 +14,58 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        /*
-         * Optional methods to load your package assets
-         */
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'laravel-hyperpay');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-hyperpay');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->registerRoutes();
+        $this->registerResources();
+        $this->registerPublishing();
+    }
 
+    /**
+     * Register the package routes.
+     *
+     * @return void
+     */
+    protected function registerRoutes()
+    {
+        Route::group([
+                'prefix' => 'hyperpay',
+                'namespace' => 'Devinweb\LaravelHyperpay\Http\Controllers',
+                'as' => 'hyperpay.',
+            ], function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+            });
+    }
+
+    /**
+     * Register the package's publishable resources.
+     *
+     * @return void
+     */
+    protected function registerResources()
+    {
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'hyperpay');
+    }
+
+
+    /**
+     * Register the package's publishable resources.
+     *
+     * @return void
+     */
+    protected function registerPublishing()
+    {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/config.php' => config_path('hyperpay.php'),
+                __DIR__.'/../config/hyperpay.php' => config_path('hyperpay.php'),
             ], 'config');
 
-            // Publishing the views.
-            /*$this->publishes([
-                __DIR__.'/../resources/views' => resource_path('views/vendor/laravel-hyperpay'),
-            ], 'views');*/
 
-            // Publishing assets.
-            /*$this->publishes([
-                __DIR__.'/../resources/assets' => public_path('vendor/laravel-hyperpay'),
-            ], 'assets');*/
+            if (! class_exists('CreateTransactionsTable')) {
+                $this->publishes([
+                    __DIR__ . '/../database/migrations/create_transactions_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_transactions_table.php'),
+                    ], 'migrations');
+            }
 
-            // Publishing the translation files.
-            /*$this->publishes([
-                __DIR__.'/../resources/lang' => resource_path('lang/vendor/laravel-hyperpay'),
-            ], 'lang');*/
-
-            // Registering package commands.
-            // $this->commands([]);
-            
             $this->commands([
                 BillingCommand::class,
             ]);

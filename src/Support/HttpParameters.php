@@ -52,15 +52,14 @@ class HttpParameters
      */
     protected function getBodyParameters($amount, Model $user, $heyPerPayConfig): array
     {
-        Log::info(['notificationUrl' => 'https://03087d1495a5.ngrok.io/'.$heyPerPayConfig['notificationUrl']]);
+        Log::info(['notificationUrl' => url('/').$heyPerPayConfig['notificationUrl']]);
         $body_parameters =  [
             'entityId' => $heyPerPayConfig['entityId'],
             'amount' => $amount,
             'currency' => $heyPerPayConfig['currency'],
             'paymentType' => 'DB',
             'merchantTransactionId' => $heyPerPayConfig['merchantTransactionId'],
-            'notificationUrl' => 'https://03087d1495a5.ngrok.io/'.$heyPerPayConfig['notificationUrl'],
-            // 'shopperResultUrl' => 'https://03087d1495a5.ngrok.io/'.$heyPerPayConfig['redirect_url'],
+            'notificationUrl' => url('/').$heyPerPayConfig['notificationUrl'],
             'customer.email' => "ceo@ekliel.com",
             'customer.givenName' => "ABDULAZIZ",
             'customer.surname' => "ALGHAMDI",
@@ -85,25 +84,14 @@ class HttpParameters
      *
      *
      */
-    protected function getEntityId($checkout_id)
+    protected function getEntityId($id)
     {
-        $transaction = $this->getTransaction($checkout_id);
+        $transaction = (new TransactionBuilder())->findByIdOrCheckoutId($id);
         $entityId = config('hyperpay.entityId');
         if ($transaction->brand === 'mada') {
             $entityId = config('hyperpay.entityIdMada');
         }
 
         return $entityId;
-    }
-
-    /**
-     *
-     *
-     */
-    protected function getTransaction($checkout_id): Model
-    {
-        $transaction_model = config('hyperpay.transaction_model');
-        $transaction = app($transaction_model)->whereCheckoutId($checkout_id)->first();
-        return $transaction;
     }
 }

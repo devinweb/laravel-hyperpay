@@ -6,15 +6,13 @@ use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
 use Devinweb\LaravelHyperpay\Contracts\Hyperpay;
 use Devinweb\LaravelHyperpay\Support\HttpClient;
 use Devinweb\LaravelHyperpay\Support\HttpParameters;
+use Devinweb\LaravelHyperpay\Support\TransactionBuilder;
 use Devinweb\LaravelHyperpay\Traits\ManageUserTransactions;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Arr;
 
 class LaravelHyperpay implements Hyperpay
 {
@@ -87,7 +85,7 @@ class LaravelHyperpay implements Hyperpay
 
         $checkout_data = $this->prepareCheckout($user, $amount, $request);
         
-        $redirect_url = "https://03087d1495a5.ngrok.io". config('hyperpay.redirect_url');
+        $redirect_url = url('/'). config('hyperpay.redirect_url');
         
         return array_merge($checkout_data, [
             "shopperResultUrl" => $redirect_url
@@ -105,7 +103,7 @@ class LaravelHyperpay implements Hyperpay
         $this->config['userAgent'] = $request->server('HTTP_USER_AGENT');
         $parameters = (new HttpParameters())->postParams($amount, $user, $this->config, $this->billing);
         $response =  (new HttpClient($this->client, '/v1/checkouts', $this->config))->post($parameters);
-        $this->createTransationInDB($response, $user);
+        (new TransactionBuilder($user))->create($response);
         return $response;
     }
 
@@ -116,7 +114,9 @@ class LaravelHyperpay implements Hyperpay
     public function paymentStatus(string $resourcePath, string $checkout_id)
     {
         $parameters = (new HttpParameters())->getParams($checkout_id);
-        return (new HttpClient($this->client, $resourcePath, $this->config))->get($parameters);
+        $transaction = (new TransactionBuilder())->findByIdOrCheckoutId($checkout_id);
+        $result =  (new HttpClient($this->client, $resourcePath, $this->config))->get($parameters, $transaction);
+        return $result;
     }
 
     /**
@@ -164,35 +164,5 @@ class LaravelHyperpay implements Hyperpay
     private function generateToken()
     {
         return Str::random('64');
-    }
-
-    /**
-     *
-     *
-     */
-    protected function createTransationInDB($data, Model $user)
-    {
-        if (Arr::has($data, 'result')) {
-            if (Arr::get($data, 'result.code') == '000.200.100') {
-                $transaction = config('hyperpay.transaction_model');
-                app($transaction)->create([
-                    "id" => Arr::get($data, 'merchantTransactionId'),
-                    "user_id" => $user->id,
-                    "checkout_id" => Arr::get($data, 'id'),
-                    "status" => Arr::get($data, 'result'),
-                    "amount" => Arr::get($data, 'amount'),
-                    "currency" => Arr::get($data, 'currency'),
-                    "brand" => $this->getBrand($data['entityId'])
-                ]);
-            }
-        }
-    }
-
-    protected function getBrand($entityId)
-    {
-        if ($entityId == config('entityIdMada')) {
-            return 'mada';
-        }
-        return "default";
     }
 }

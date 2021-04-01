@@ -1,7 +1,10 @@
 <?php
 namespace Devinweb\LaravelHyperpay\Support;
 
+use Devinweb\LaravelHyperpay\Events\FailTransaction;
+use Devinweb\LaravelHyperpay\Events\SuccessTransaction;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 
@@ -13,6 +16,20 @@ final class HttpResponse
     const OK = 200;
     const ERROR = 400;
 
+    /**
+    * @var string pattern
+    */
+    const SUCCESS_CODE_PATTERN = '/^(000\.000\.|000\.100\.1|000\.[36])/';
+    const SUCCESS_MANUAL_REVIEW_CODE_PATTERN = '/^(000\.400\.0|000\.400\.100)/';
+
+
+    /**
+    * @var TransactionBuilder transaction
+    */
+    
+    protected $transaction;
+
+
 
     /**
      * Create a new manager instance.
@@ -20,9 +37,11 @@ final class HttpResponse
      * @param  \GuzzleHttp\Client as GuzzleClient  $client
      * @return void
      */
-    public function __construct(Response $response)
+    public function __construct(Response $response, ?Model $transaction=null)
     {
         $this->response = $response;
+
+        $this->transaction = $transaction;
     }
 
 
@@ -50,17 +69,36 @@ final class HttpResponse
     
     protected function response($body)
     {
-        $successCodePattern = '/^(000\.000\.|000\.100\.1|000\.[36])/';
-        $successManualReviewCodePattern = '/^(000\.400\.0|000\.400\.100)/';
         if (Arr::has($body, 'result.code')) {
             $message = Arr::get($body, 'result.description');
             $result = array_merge($body, ['message' => $message]);
-            if (preg_match($successCodePattern, Arr::get($body, 'result.code')) || preg_match($successManualReviewCodePattern, Arr::get($body, 'result.code'))) {
+            if (preg_match(self::SUCCESS_CODE_PATTERN, Arr::get($body, 'result.code')) || preg_match(self::SUCCESS_MANUAL_REVIEW_CODE_PATTERN, Arr::get($body, 'result.code'))) {
+                $this->updateTransaction('success', $result);
                 return response()->json($result, self::OK);
             }
             return response()->json($result, self::ERROR);
         }
+        $this->updateTransaction('canceled', $body);
         Log::info(['error' =>__("failed_message")]);
         return response()->json(['message' => __("failed_message")], self::ERROR);
+    }
+
+
+    protected function updateTransaction($status, array $optionData)
+    {
+        if ($status == 'success') {
+            event(new SuccessTransaction($optionData));
+        }
+
+        if ($status == 'cancel') {
+            $optionData = $this->transaction->data;
+            event(new FailTransaction($optionData));
+        }
+
+
+        $this->transaction->update([
+            "status" => $status,
+            "data" =>  $optionData
+        ]);
     }
 }

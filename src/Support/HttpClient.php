@@ -3,6 +3,7 @@ namespace Devinweb\LaravelHyperpay\Support;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 final class HttpClient
@@ -72,7 +73,7 @@ final class HttpClient
      *
      *
      */
-    public function get($parameters)
+    public function get($parameters, Model $transaction)
     {
         try {
             Log::info(['gateway_url' => $this->gateway_url]);
@@ -85,7 +86,7 @@ final class HttpClient
             ]);
             
 
-            return (new HttpResponse($response))->paymentStatus();
+            return (new HttpResponse($response, $transaction))->paymentStatus();
         } catch (RequestException $e) {
             $response = $e->getResponse();
             return (new HttpResponse($response))->finalResponse();

@@ -21,7 +21,7 @@ class CreateTransactionsTable extends Migration
             $table->string('status');
             $table->float('amount');
             $table->string('currency');
-            // $table->json('data')->nullable();
+            $table->json('data')->nullable();
             $table->string('brand');
 
             $table->foreign('user_id')->references('id')->on('users')

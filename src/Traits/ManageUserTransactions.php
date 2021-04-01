@@ -1,23 +1,16 @@
 <?php
 namespace Devinweb\LaravelHyperpay\Traits;
 
-use Devinweb\LaravelHyperpay\Models\Transaction;
-
 trait ManageUserTransactions
 {
-
     /**
-     * Get the transaction instance by User ID.
+     * Get all of the subscriptions for the Stripe model.
      *
-     * @param  int  $user_id
-     * @return \Models\Transaction|null
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public static function findPending($userId)
+    public function transactions()
     {
-        if ($userId === null) {
-            return;
-        }
-
-        return Transaction::where('user_id', $userId)->where('status', '!=', 'failed')->first();
+        $transaction_model = config('hyperpay.transaction_model');
+        return $this->hasMany($transaction_model, $this->getForeignKey())->orderBy('created_at', 'desc');
     }
 }

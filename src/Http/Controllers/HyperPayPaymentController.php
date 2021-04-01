@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 use Devinweb\LaravelHyperpay\Http\Middleware\VerifyRedirectUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Billing\HyperPayBilling;
 
 class HyperPayPaymentController extends Controller
 {
@@ -46,7 +47,7 @@ class HyperPayPaymentController extends Controller
         $amount = 1;
         $brand = $request->brand;
         
-        return LaravelHyperpay::checkout($user, $amount, $brand, $request);
+        return LaravelHyperpay::addBilling(new HyperPayBilling($request))->checkout($user, $amount, $brand, $request);
     }
 
 

@@ -18,7 +18,9 @@ class HttpParameters
         $billing_parameters = $this->getBillingParameters($billing);
        
         $parameters = array_merge($body, $billing_parameters);
-        
+
+        Log::info(['checkout_parameters' => $parameters]);
+
         return $parameters;
     }
 
@@ -29,7 +31,6 @@ class HttpParameters
     public function getParams($checkout_id): array
     {
         $entityId = $this->getEntityId($checkout_id);
-        Log::info(['entityId' => $entityId]);
         return ['entityId' => $entityId];
     }
 
@@ -76,7 +77,6 @@ class HttpParameters
             $body_parameters['testMode'] = 'EXTERNAL';
         }
 
-        Log::info(['checkout_parameters' => $body_parameters]);
         return $body_parameters;
     }
 

@@ -115,8 +115,7 @@ class LaravelHyperpay implements Hyperpay
     {
         $parameters = (new HttpParameters())->getParams($checkout_id);
         $transaction = (new TransactionBuilder())->findByIdOrCheckoutId($checkout_id);
-        $result =  (new HttpClient($this->client, $resourcePath, $this->config))->get($parameters, $transaction);
-        return $result;
+        return (new HttpClient($this->client, $resourcePath, $this->config))->get($parameters, $transaction);
     }
 
     /**

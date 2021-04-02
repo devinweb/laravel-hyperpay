@@ -67,10 +67,6 @@ class HttpParameters
             'customer.mobile' => '0503008404',
             'customer.browser.userAgent' => $heyPerPayConfig['userAgent'],
             'customer.browser.language' => config('app.locale'),
-            // 'billing.city'  => 'tetouan',
-            // 'billing.country'  => 'MA',
-            // 'billing.street1'  => 'test',
-            // 'billing.postcode'  => '93000',
         ];
 
         if ($heyPerPayConfig['sandboxMode']) {

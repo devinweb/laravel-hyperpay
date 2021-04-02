@@ -3,13 +3,12 @@ namespace Devinweb\LaravelHyperpay\Support;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 final class HttpClient
 {
-    protected $gateway_url = 'https://test.oppwa.com';
-
     /**
      * @var Config $config
      */
@@ -42,9 +41,6 @@ final class HttpClient
         $this->client = $client;
         $this->config = $config;
         $this->path = $path;
-        if (!Config('hyperpay.sandboxMode')) {
-            $this->gateway_url = 'https://oppwa.com';
-        }
     }
 
     /**
@@ -52,20 +48,20 @@ final class HttpClient
      *
      *
      */
-    public function post(array $parameters)
+    public function post(array $parameters): Response
     {
         try {
-            $response = $this->client->post($this->gateway_url . $this->path, [
+            $response = $this->client->post($this->path, [
                 'form_params' => $parameters,
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
                     'Authorization' => 'Bearer ' . $this->config['access_token'],
                 ]
             ]);
-            return (new HttpResponse($response))->prepareCheckout($parameters, $this->gateway_url);
+            return $response;
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            return (new HttpResponse($response))->finalResponse();
+            return $response;
         }
     }
     
@@ -73,11 +69,10 @@ final class HttpClient
      *
      *
      */
-    public function get($parameters, Model $transaction)
+    public function get($parameters): Response
     {
         try {
-            Log::info(['gateway_url' => $this->gateway_url]);
-            $response = $this->client->get($this->gateway_url . $this->path, [
+            $response = $this->client->get($this->path, [
                 'query' => $parameters,
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->config['access_token'],
@@ -86,10 +81,10 @@ final class HttpClient
             ]);
             
 
-            return (new HttpResponse($response, $transaction))->paymentStatus();
+            return $response;
         } catch (RequestException $e) {
             $response = $e->getResponse();
-            return (new HttpResponse($response))->finalResponse();
+            return $response;
         }
     }
 }

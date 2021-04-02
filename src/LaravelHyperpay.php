@@ -6,6 +6,7 @@ use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
 use Devinweb\LaravelHyperpay\Contracts\Hyperpay;
 use Devinweb\LaravelHyperpay\Support\HttpClient;
 use Devinweb\LaravelHyperpay\Support\HttpParameters;
+use Devinweb\LaravelHyperpay\Support\HttpResponse;
 use Devinweb\LaravelHyperpay\Support\TransactionBuilder;
 use Devinweb\LaravelHyperpay\Traits\ManageUserTransactions;
 use GuzzleHttp\Client as GuzzleClient;
@@ -37,6 +38,9 @@ class LaravelHyperpay implements Hyperpay
     protected $brand;
 
 
+    protected $gateway_url = 'https://test.oppwa.com';
+
+
     /**
      * Create a new manager instance.
      *
@@ -47,6 +51,9 @@ class LaravelHyperpay implements Hyperpay
     {
         $this->client = $client;
         $this->config = config('hyperpay');
+        if (!config('hyperpay.sandboxMode')) {
+            $this->gateway_url = 'https://oppwa.com';
+        }
     }
 
     /**
@@ -83,13 +90,13 @@ class LaravelHyperpay implements Hyperpay
             $this->mada();
         }
 
-        $checkout_data = $this->prepareCheckout($user, $amount, $request);
+        return $this->prepareCheckout($user, $amount, $request);
         
-        $redirect_url = url('/'). config('hyperpay.redirect_url');
+        // $redirect_url = url('/'). config('hyperpay.redirect_url');
         
-        return array_merge($checkout_data, [
-            "shopperResultUrl" => $redirect_url
-        ]);
+        // return array_merge($checkout_data, [
+        //     "shopperResultUrl" => $redirect_url
+        // ]);
     }
 
     /**
@@ -101,9 +108,17 @@ class LaravelHyperpay implements Hyperpay
         $this->token = $this->generateToken();
         $this->config['merchantTransactionId'] = $this->token;
         $this->config['userAgent'] = $request->server('HTTP_USER_AGENT');
-        $parameters = (new HttpParameters())->postParams($amount, $user, $this->config, $this->billing);
-        $response =  (new HttpClient($this->client, '/v1/checkouts', $this->config))->post($parameters);
-        (new TransactionBuilder($user))->create($response);
+        $result =  (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
+            $parameters = (new HttpParameters())->postParams($amount, $user, $this->config, $this->billing)
+        );
+
+        $response = (new HttpResponse($result, null, $parameters))
+            ->setUser($user)
+            ->addScriptUrl($this->gateway_url)
+            ->addShopperResultUrl()
+            ->prepareCheckout();
+
+        
         return $response;
     }
 
@@ -113,9 +128,16 @@ class LaravelHyperpay implements Hyperpay
      */
     public function paymentStatus(string $resourcePath, string $checkout_id)
     {
-        $parameters = (new HttpParameters())->getParams($checkout_id);
-        $transaction = (new TransactionBuilder())->findByIdOrCheckoutId($checkout_id);
-        return (new HttpClient($this->client, $resourcePath, $this->config))->get($parameters, $transaction);
+        $result = (new HttpClient($this->client, $this->gateway_url.$resourcePath, $this->config))->get(
+            (new HttpParameters())->getParams($checkout_id),
+        );
+        
+        $response = (new HttpResponse(
+            $result,
+            (new TransactionBuilder())->findByIdOrCheckoutId($checkout_id),
+        ))->paymentStatus();
+
+        return $response;
     }
 
     /**

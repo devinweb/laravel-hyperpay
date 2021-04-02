@@ -18,7 +18,7 @@ class HyperPayPaymentController extends Controller
      */
     public function __construct()
     {
-        $this->middleware(VerifyRedirectUrl::class);
+        // $this->middleware(VerifyRedirectUrl::class);
     }
 
     /**

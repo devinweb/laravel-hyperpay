@@ -15,6 +15,9 @@ final class HttpResponse
     */
     const OK = 200;
     const ERROR = 400;
+    const HTTP_UNPROCESSABLE_ENTITY = 422;
+    const HTTP_BAD_REQUEST = 400;
+    const HTTP_OK = 200;
 
     /**
     * @var string pattern
@@ -28,6 +31,31 @@ final class HttpResponse
     */
     
     protected $transaction;
+    
+    /**
+    * @var array optionsData
+    */
+    
+    protected $optionsData;
+    
+    
+    /**
+    * @var Model user
+    */
+    
+    protected $user;
+    
+    /**
+    * @var string script_url
+    */
+    
+    protected $script_url;
+    
+    /**
+    * @var string shopperResultUrl
+    */
+    
+    protected $shopperResultUrl;
 
 
 
@@ -37,50 +65,127 @@ final class HttpResponse
      * @param  \GuzzleHttp\Client as GuzzleClient  $client
      * @return void
      */
-    public function __construct(Response $response, ?Model $transaction=null)
+    public function __construct(Response $response, ?Model $transaction=null, ?array $optionsData = [])
     {
         $this->response = $response;
 
         $this->transaction = $transaction;
+
+        $this->optionsData = $optionsData;
     }
 
 
-    public function prepareCheckout($parameters = [], $gateway_url)
+    public function prepareCheckout()
     {
-        $body = (array )json_decode((string) $this->response->getBody(), true);
-        $result =  array_merge($body, $parameters, ['script_url' => $gateway_url."/v1/paymentWidgets.js?checkoutId={$body['id']}"]);
-        Log::info(['prepare_checkout' => $body]);
-        return $result;
+        $response =  $this->response();
+        Log::info(['prepare_checkout' => $response]);
+        if ($response['status'] == self::HTTP_OK) {
+            (new TransactionBuilder($this->user))->create(array_merge($response, $this->optionsData));
+            $response = array_merge($response, [
+                'script_url' => $this->script_url,
+                'shopperResultUrl' => $this->shopperResultUrl
+            ]);
+        }
+
+        return response()->json($response, $response['status']);
     }
     
     
     public function paymentStatus()
     {
-        $body = (array )json_decode((string) $this->response->getBody(), true);
-        Log::info(['payment_status' => $body]);
-        return $this->response($body);
+        $response = $this->response();
+        Log::info(['payment_status' => $response]);
+        if ($response['status'] == self::HTTP_OK) {
+            $this->updateTransaction('success', $response);
+        }
+        
+        if (Arr::has($response, 'body.message')) {
+            $this->updateTransaction('cancel', $response);
+        }
+
+        return response()->json($response, $response['status']);
     }
 
+    /**
+     * Get the body of the response.
+     *
+     * @return array
+     */
 
-    public function finalResponse()
+    public function body()
     {
-        return $this->paymentStatus();
+        return (array ) json_decode((string) $this->response->getBody(), true);
+    }
+
+    /**
+     * Get the status code of the response.
+     *
+     * @return int
+     */
+    public function status()
+    {
+        return (int) $this->response->getStatusCode();
+    }
+
+    /**
+     * Add the script url that used in the front end to generate the payment form
+     *
+     * @return $this
+     */
+    public function addScriptUrl($base_url)
+    {
+        $script_url = $base_url. "/v1/paymentWidgets.js?checkoutId={$this->body()['id']}";
+        $this->script_url = $script_url;
+        return $this;
+    }
+
+    /**
+     * Add the shopperResultUrl to the response parameters
+     *
+     * @return $this
+     */
+    public function addShopperResultUrl()
+    {
+        $redirect_url = url('/'). config('hyperpay.redirect_url');
+
+        $this->shopperResultUrl= $redirect_url;
+
+        return $this;
+    }
+
+    /**
+     * Set the given user to create a transaction to him
+     *
+     * @return $this
+     */
+    public function setUser(Model $user)
+    {
+        $this->user = $user;
+
+        return $this;
     }
     
-    protected function response($body)
+    /**
+     * Get the response final
+     *
+     * @return \Illuminate\Support\Facades\Response
+     */
+    protected function response(): array
     {
+        $body = $this->body();
         if (Arr::has($body, 'result.code')) {
             $message = Arr::get($body, 'result.description');
             $result = array_merge($body, ['message' => $message]);
-            if (preg_match(self::SUCCESS_CODE_PATTERN, Arr::get($body, 'result.code')) || preg_match(self::SUCCESS_MANUAL_REVIEW_CODE_PATTERN, Arr::get($body, 'result.code'))) {
-                $this->updateTransaction('success', $result);
-                return response()->json($result, self::OK);
+            if (preg_match(self::SUCCESS_CODE_PATTERN, Arr::get($body, 'result.code'))
+                || preg_match(self::SUCCESS_MANUAL_REVIEW_CODE_PATTERN, Arr::get($body, 'result.code'))
+                || Arr::get($body, 'result.code') == '000.200.100'
+                ) {
+                return array_merge($result, ['status' => self::HTTP_OK]);
             }
-            return response()->json($result, self::ERROR);
+
+            return array_merge($result, ['status' => self::HTTP_UNPROCESSABLE_ENTITY]);
         }
-        $this->updateTransaction('canceled', $body);
-        Log::info(['error' =>__("failed_message")]);
-        return response()->json(['message' => __("failed_message")], self::ERROR);
+        return array_merge($body, ['message' => __("failed_message"), 'status' => self::HTTP_UNPROCESSABLE_ENTITY]);
     }
 
 

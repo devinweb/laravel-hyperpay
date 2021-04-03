@@ -13,7 +13,6 @@ use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 class LaravelHyperpay implements Hyperpay
 {
@@ -21,25 +20,23 @@ class LaravelHyperpay implements Hyperpay
 
     /** @var GuzzleClient */
     protected $client;
-    
+
     /**
      * @var BillingInterface
      */
     protected $billing = [];
-    
+
     /**
      * @var string token
      */
     protected $token;
-    
+
     /**
      * @var string brand
      */
     protected $brand;
 
-
     protected $gateway_url = 'https://test.oppwa.com';
-
 
     /**
      * Create a new manager instance.
@@ -51,22 +48,18 @@ class LaravelHyperpay implements Hyperpay
     {
         $this->client = $client;
         $this->config = config('hyperpay');
-        if (!config('hyperpay.sandboxMode')) {
+        if (! config('hyperpay.sandboxMode')) {
             $this->gateway_url = 'https://oppwa.com';
         }
     }
 
-    /**
-     *
-     *
-     */
     public function mada()
     {
         $this->config['entityId'] = config('hyperpay.entityIdMada');
     }
 
     /**
-     * Add billing data to the payment body
+     * Add billing data to the payment body.
      * @param BillingInterface $billing;
      *
      * return $this
@@ -74,14 +67,10 @@ class LaravelHyperpay implements Hyperpay
     public function addBilling(BillingInterface $billing)
     {
         $this->billing = $billing;
+
         return $this;
     }
 
-
-    /**
-     *
-     *
-     */
     public function checkout(Model $user, $amount, $brand, Request $request)
     {
         $this->brand = $brand;
@@ -91,24 +80,20 @@ class LaravelHyperpay implements Hyperpay
         }
 
         return $this->prepareCheckout($user, $amount, $request);
-        
+
         // $redirect_url = url('/'). config('hyperpay.redirect_url');
-        
+
         // return array_merge($checkout_data, [
         //     "shopperResultUrl" => $redirect_url
         // ]);
     }
 
-    /**
-     *
-     *
-     */
     protected function prepareCheckout(Model $user, $amount, $request)
     {
         $this->token = $this->generateToken();
         $this->config['merchantTransactionId'] = $this->token;
         $this->config['userAgent'] = $request->server('HTTP_USER_AGENT');
-        $result =  (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
+        $result = (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
             $parameters = (new HttpParameters())->postParams($amount, $user, $this->config, $this->billing)
         );
 
@@ -118,20 +103,15 @@ class LaravelHyperpay implements Hyperpay
             ->addShopperResultUrl()
             ->prepareCheckout();
 
-        
         return $response;
     }
 
-    /**
-     *
-     *
-     */
     public function paymentStatus(string $resourcePath, string $checkout_id)
     {
         $result = (new HttpClient($this->client, $this->gateway_url.$resourcePath, $this->config))->get(
             (new HttpParameters())->getParams($checkout_id),
         );
-        
+
         $response = (new HttpResponse(
             $result,
             (new TransactionBuilder())->findByIdOrCheckoutId($checkout_id),
@@ -140,48 +120,25 @@ class LaravelHyperpay implements Hyperpay
         return $response;
     }
 
-    /**
-     *
-     *
-     */
     public function isSuccessfulResponse(array $response): bool
     {
         return false;
     }
 
-    /**
-     *
-     *
-     *
-     */
     public function getMessageFromError(array $response): ?string
     {
         return '';
     }
 
-    /**
-     *
-     *
-     */
     public function pending()
     {
     }
 
-    /**
-     *
-     *
-     *
-     */
     public function merchantTransactionId()
     {
         return $this->token;
     }
 
-    /**
-     *
-     *
-     *
-     */
     private function generateToken()
     {
         return Str::random('64');

@@ -2,12 +2,11 @@
 
 namespace Devinweb\LaravelHyperpay\Http\Controllers;
 
+use App\Billing\HyperPayBilling;
 use Devinweb\LaravelHyperpay\Facades\LaravelHyperpay;
-use Illuminate\Routing\Controller;
 use Devinweb\LaravelHyperpay\Http\Middleware\VerifyRedirectUrl;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use App\Billing\HyperPayBilling;
+use Illuminate\Routing\Controller;
 
 class HyperPayPaymentController extends Controller
 {
@@ -33,56 +32,35 @@ class HyperPayPaymentController extends Controller
             'redirect' => url(request('redirect', '/')),
         ]);
     }
-    
-    /**
-     *
-     *
-     *
-     *
-     */
+
     public function payment(Request $request)
     {
         $model = config('hyperpay.model');
         $user = app($model)->first();
         $amount = 1;
         $brand = $request->brand;
-        
+
         return LaravelHyperpay::addBilling(new HyperPayBilling($request))->checkout($user, $amount, $brand, $request);
     }
 
-
-    /**
-     *
-     *
-     *
-     */
     public function paymentStatus(Request $request)
     {
         $resourcePath = $request->get('resourcePath');
         $checkout_id = $request->get('id');
+
         return LaravelHyperpay::paymentStatus($resourcePath, $checkout_id);
     }
 
-    /**
-     *
-     *
-     *
-     */
     public function checkout()
     {
         return view('hyperpay::checkout');
     }
 
-    /**
-     *
-     *
-     *
-     */
     public function finalize(Request $request)
     {
         return view('hyperpay::finalize', [
-            "id" => $request->get('id'),
-            "resourcePath" => $request->get('resourcePath')
+            'id' => $request->get('id'),
+            'resourcePath' => $request->get('resourcePath'),
         ]);
     }
 }

@@ -3,9 +3,9 @@
 namespace Devinweb\LaravelHyperpay;
 
 use Devinweb\LaravelHyperpay\Console\BillingCommand;
-use Illuminate\Support\ServiceProvider;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\ServiceProvider;
 
 class LaravelHyperpayServiceProvider extends ServiceProvider
 {
@@ -27,10 +27,10 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
     protected function registerRoutes()
     {
         Route::group([
-                'prefix' => 'hyperpay',
-                'namespace' => 'Devinweb\LaravelHyperpay\Http\Controllers',
-                'as' => 'hyperpay.',
-            ], function () {
+            'prefix' => 'hyperpay',
+            'namespace' => 'Devinweb\LaravelHyperpay\Http\Controllers',
+            'as' => 'hyperpay.',
+        ], function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
     }
@@ -46,7 +46,6 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'hyperpay');
     }
 
-
     /**
      * Register the package's publishable resources.
      *
@@ -59,11 +58,10 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
                 __DIR__.'/../config/hyperpay.php' => config_path('hyperpay.php'),
             ], 'config');
 
-
             if (! class_exists('CreateTransactionsTable')) {
                 $this->publishes([
-                    __DIR__ . '/../database/migrations/create_transactions_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_transactions_table.php'),
-                    ], 'migrations');
+                    __DIR__.'/../database/migrations/create_transactions_table.php.stub' => database_path('migrations/'.date('Y_m_d_His', time()).'_create_transactions_table.php'),
+                ], 'migrations');
             }
 
             $this->commands([

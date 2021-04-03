@@ -1,34 +1,27 @@
 <?php
+
 namespace Devinweb\LaravelHyperpay\Support;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
 final class HttpClient
 {
     /**
-     * @var Config $config
+     * @var Config
      */
     protected $config = [];
 
-
     /**
-     * @var User $user
+     * @var User
      */
-
     protected $user;
-    
-    
+
     /**
-     * @var string $path
+     * @var string
      */
-
     protected $path;
-
-
 
     /**
      * Create a new manager instance.
@@ -43,11 +36,6 @@ final class HttpClient
         $this->path = $path;
     }
 
-    /**
-     *
-     *
-     *
-     */
     public function post(array $parameters): Response
     {
         try {
@@ -55,35 +43,33 @@ final class HttpClient
                 'form_params' => $parameters,
                 'headers' => [
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                    'Authorization' => 'Bearer ' . $this->config['access_token'],
-                ]
+                    'Authorization' => 'Bearer '.$this->config['access_token'],
+                ],
             ]);
+
             return $response;
         } catch (RequestException $e) {
             $response = $e->getResponse();
+
             return $response;
         }
     }
-    
-    /**
-     *
-     *
-     */
+
     public function get($parameters): Response
     {
         try {
             $response = $this->client->get($this->path, [
                 'query' => $parameters,
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $this->config['access_token'],
+                    'Authorization' => 'Bearer '.$this->config['access_token'],
                     'Content-Type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-                    ]
+                ],
             ]);
-            
 
             return $response;
         } catch (RequestException $e) {
             $response = $e->getResponse();
+
             return $response;
         }
     }

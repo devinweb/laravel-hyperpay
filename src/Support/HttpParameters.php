@@ -1,4 +1,5 @@
 <?php
+
 namespace Devinweb\LaravelHyperpay\Support;
 
 use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
@@ -9,7 +10,7 @@ class HttpParameters
 {
     /**
      * Get the parameters that used in the request with hyperpay
-     * to initilize the transaction and generate the form
+     * to initilize the transaction and generate the form.
      *
      * @param float $amount
      * @param Model $user
@@ -23,7 +24,7 @@ class HttpParameters
         $body = $this->getBodyParameters($amount, $user, $heyPerPayConfig);
 
         $billing_parameters = $this->getBillingParameters($billing);
-       
+
         $parameters = array_merge($body, $billing_parameters);
 
         Log::info(['checkout_parameters' => $parameters]);
@@ -32,7 +33,7 @@ class HttpParameters
     }
 
     /**
-     * Get the entity id base on the checkout id of its for VISA/MASTER or MADA
+     * Get the entity id base on the checkout id of its for VISA/MASTER or MADA.
      *
      * @param string $checkout_id
      *
@@ -41,12 +42,12 @@ class HttpParameters
     public function getParams($checkout_id): array
     {
         $entityId = $this->getEntityId($checkout_id);
+
         return ['entityId' => $entityId];
     }
-    
 
     /**
-     * Generate the basic user parameters
+     * Generate the basic user parameters.
      *
      * @param float $amount
      * @param Model $user
@@ -57,7 +58,7 @@ class HttpParameters
     protected function getBodyParameters($amount, Model $user, $heyPerPayConfig): array
     {
         Log::info(['notificationUrl' => url('/').$heyPerPayConfig['notificationUrl']]);
-        $body_parameters =  [
+        $body_parameters = [
             'entityId' => $heyPerPayConfig['entityId'],
             'amount' => $amount,
             'currency' => $heyPerPayConfig['currency'],
@@ -80,7 +81,7 @@ class HttpParameters
     }
 
     /**
-     * Get the billing data from the Billing class if a user generate one
+     * Get the billing data from the Billing class if a user generate one.
      *
      * @param Devinweb\LaravelHyperpay\Contracts\BillingInterface $billing
      *
@@ -91,11 +92,12 @@ class HttpParameters
         if ($billing instanceof BillingInterface) {
             return $billing->getBillingData();
         }
+
         return [];
     }
 
     /**
-     * Find the entityId from the transaction if its for MADA of else
+     * Find the entityId from the transaction if its for MADA of else.
      *
      * @param string $id transaction id
      *

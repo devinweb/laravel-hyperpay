@@ -32,6 +32,8 @@ class TransactionBuilder
      */
     public function create(array $transactionData)
     {
+        $this->currentUserCleanOldPendingTransaction();
+        
         $transaction = $this->owner->transactions()->create([
                     "id" => Arr::get($transactionData, 'merchantTransactionId'),
                     "user_id" => $this->owner->id,
@@ -61,5 +63,13 @@ class TransactionBuilder
             return 'mada';
         }
         return "default";
+    }
+
+    protected function currentUserCleanOldPendingTransaction()
+    {
+        $transaction = $this->owner->transactions()->where('status', 'pending')->first();
+        if ($transaction) {
+            $transaction->delete();
+        }
     }
 }

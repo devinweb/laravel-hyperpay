@@ -143,15 +143,18 @@ Next the response returned by the `prepareCheckout` actions
 
 ```json
 {
-    buildNumber: ""
-    id: "RANDOME_ID.uat01-vm-tx04"
-    message: "successfully created checkout"
-    ndc: "RANDOME_ID.uat01-vm-tx04"
-    result: {code: "000.200.100", description: "successfully created checkout"}
-    script_url: "https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=RANDOME_ID.uat01-vm-tx04"
-    shopperResultUrl: "shopperResultUrl"
-    status: 200
-    timestamp: "2021-04-05 11:16:50+0000"
+    "buildNumber": "",
+    "id": "RANDOME_ID.uat01-vm-tx04",
+    "message": "successfully created checkout",
+    "ndc": "RANDOME_ID.uat01-vm-tx04",
+    "result": {
+        "code": "000.200.100",
+        "description": "successfully created checkout"
+    },
+    "script_url": "https://test.oppwa.com/v1/paymentWidgets.js?checkoutId=RANDOME_ID.uat01-vm-tx04",
+    "shopperResultUrl": "shopperResultUrl",
+    "status": "200",
+    "timestamp": "2021-04-05 11:16:50+0000"
 }
 ```
 

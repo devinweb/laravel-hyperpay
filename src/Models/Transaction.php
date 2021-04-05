@@ -20,7 +20,7 @@ class Transaction extends Model
     /**
      * Disable auto-increment.
      *
-     * @var boolean
+     * @var bool
      */
     public $incrementing = false;
 
@@ -29,7 +29,6 @@ class Transaction extends Model
      *
      * @var string
      */
-
     protected $keyType = 'string';
 
     /**
@@ -46,10 +45,8 @@ class Transaction extends Model
      */
     protected $casts = [
         'data' => 'array',
-        'trackable_data' => 'array'
+        'trackable_data' => 'array',
     ];
-
-    
 
     /**
      * Get the user that owns the transation.
@@ -62,7 +59,7 @@ class Transaction extends Model
     }
 
     /**
-     * Determine if the transaction is pending
+     * Determine if the transaction is pending.
      *
      * @return bool
      */
@@ -71,12 +68,11 @@ class Transaction extends Model
         return $this->status == 'pending';
     }
 
-
     /**
-    * Determine if the transaction is paid
-    *
-    * @return bool
-    */
+     * Determine if the transaction is paid.
+     *
+     * @return bool
+     */
     public function isPaid()
     {
         return $this->status == 'paid';
@@ -103,7 +99,7 @@ class Transaction extends Model
     {
         return $query->where('created_at', '<', Carbon::now()->subMinutes(29));
     }
-    
+
     /**
      * Get the model related to the subscription.
      *

@@ -47,9 +47,6 @@ then don't forget the update the `transaction_model` path in the config file `ap
 ```php
 <?php
 
-/*
- * You can place your custom package configuration in here.
- */
 return [
     //
     "transaction_model" => 'YOUR_NEW_TRANSACTION_MODEL_NAMESPACE',
@@ -118,7 +115,7 @@ class PaymentController extends  Controller
             'product_type' => 't-shirt'
         ];
         $user = User::first();
-        $amout = 10;
+        $amount = 10;
         $brand = 'VISA' // MASTER OR MADA
 
         return LaravelHyperpay::checkout($trackable_data, $user, $amount, $brand, $request);

@@ -1,8 +1,6 @@
 <?php
 
-/*
- * You can place your custom package configuration in here.
- */
+
 return [
     "sandboxMode" => env('SANDBOX_MODE', true),
 

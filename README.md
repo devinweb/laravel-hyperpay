@@ -2,7 +2,6 @@
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/devinweb/laravel-hyperpay.svg?style=flat-square)](https://packagist.org/packages/devinweb/laravel-hyperpay)
 [![Build Status](https://img.shields.io/travis/devinweb/laravel-hyperpay/master.svg?style=flat-square)](https://travis-ci.org/devinweb/laravel-hyperpay)
-[![Quality Score](https://img.shields.io/scrutinizer/g/devinweb/laravel-hyperpay.svg?style=flat-square)](https://scrutinizer-ci.com/g/devinweb/laravel-hyperpay)
 [![Total Downloads](https://img.shields.io/packagist/dt/devinweb/laravel-hyperpay.svg?style=flat-square)](https://packagist.org/packages/devinweb/laravel-hyperpay)
 
 Laravel HyperPay provides an easy way to handle all the transactions with different states.

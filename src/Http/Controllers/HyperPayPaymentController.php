@@ -8,6 +8,7 @@ use Devinweb\LaravelHyperpay\Http\Middleware\VerifyRedirectUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Billing\HyperPayBilling;
+use Illuminate\Support\Str;
 
 class HyperPayPaymentController extends Controller
 {
@@ -46,8 +47,11 @@ class HyperPayPaymentController extends Controller
         $user = app($model)->first();
         $amount = 1;
         $brand = $request->brand;
-        
-        return LaravelHyperpay::addBilling(new HyperPayBilling($request))->checkout($user, $amount, $brand, $request);
+        $trackable_data = [
+            'product' => 'teams',
+            'product_id'=> Str::random('64'),
+        ];
+        return LaravelHyperpay::addBilling(new HyperPayBilling($request))->checkout($trackable_data, $user, $amount, $brand, $request);
     }
 
 

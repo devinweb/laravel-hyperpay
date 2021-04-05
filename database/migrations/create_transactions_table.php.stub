@@ -22,6 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->float('amount');
             $table->string('currency');
             $table->json('data')->nullable();
+            $table->json('trackable_data');
             $table->string('brand');
 
             $table->foreign('user_id')->references('id')->on('users')
@@ -38,6 +39,6 @@ class CreateTransactionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('transactions');
     }
 }

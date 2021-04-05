@@ -12,7 +12,7 @@ return [
     
     "access_token" => env('ACCESS_TOKEN'),
     
-    "currency" => "SAR",
+    "currency" => env('CURRENCY', 'SAR'),
     
     "redirect_url" => "/hyperpay/finalize",
 

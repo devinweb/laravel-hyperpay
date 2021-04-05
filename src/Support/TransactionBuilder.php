@@ -33,7 +33,7 @@ class TransactionBuilder
     public function create(array $transactionData)
     {
         $this->currentUserCleanOldPendingTransaction();
-        
+
         $transaction = $this->owner->transactions()->create([
                     "id" => Arr::get($transactionData, 'merchantTransactionId'),
                     "user_id" => $this->owner->id,
@@ -43,6 +43,7 @@ class TransactionBuilder
                     "currency" => Arr::get($transactionData, 'currency'),
                     "brand" => $this->getBrand($transactionData['entityId']),
                     "data" => Arr::get($transactionData, 'result'),
+                    "trackable_data" => Arr::get($transactionData, 'trackable_data'),
                  ]);
 
         return $transaction;

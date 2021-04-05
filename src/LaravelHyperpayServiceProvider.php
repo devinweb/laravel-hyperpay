@@ -57,13 +57,13 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/hyperpay.php' => config_path('hyperpay.php'),
-            ], 'config');
+            ], 'hyperpay-config');
 
 
             if (! class_exists('CreateTransactionsTable')) {
                 $this->publishes([
                     __DIR__ . '/../database/migrations/create_transactions_table.php.stub' => database_path('migrations/' . date('Y_m_d_His', time()) . '_create_transactions_table.php'),
-                    ], 'migrations');
+                    ], 'hyperpay-migrations');
             }
 
             $this->commands([

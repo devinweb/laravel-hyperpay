@@ -46,7 +46,7 @@ class Transaction extends Model
      */
     protected $casts = [
         'data' => 'array',
-        // 'status' => 'array'
+        'trackable_data' => 'array'
     ];
 
     

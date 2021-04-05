@@ -57,6 +57,12 @@ final class HttpResponse
     
     protected $shopperResultUrl;
 
+    /**
+    * @var array cart|trackable_data
+    */
+    
+    protected $trackable_data;
+
 
 
     /**
@@ -80,7 +86,7 @@ final class HttpResponse
         $response =  $this->response();
         Log::info(['prepare_checkout' => $response]);
         if ($response['status'] == self::HTTP_OK) {
-            (new TransactionBuilder($this->user))->create(array_merge($response, $this->optionsData));
+            (new TransactionBuilder($this->user))->create(array_merge($response, array_merge($this->optionsData, ['trackable_data' => $this->trackable_data])));
             $response = array_merge($response, [
                 'script_url' => $this->script_url,
                 'shopperResultUrl' => $this->shopperResultUrl
@@ -161,6 +167,18 @@ final class HttpResponse
     public function setUser(Model $user)
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Set Trackable data to be stored in the Transaction then us it in the event dispatched
+     *
+     * @return $this
+     */
+    public function setTrackableData(array $data)
+    {
+        $this->trackable_data = $data;
 
         return $this;
     }

@@ -13,6 +13,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class LaravelHyperpay implements Hyperpay
@@ -82,7 +83,7 @@ class LaravelHyperpay implements Hyperpay
      *
      *
      */
-    public function checkout(Model $user, $amount, $brand, Request $request)
+    public function checkout(array $trackable_data, Model $user, $amount, $brand, Request $request)
     {
         $this->brand = $brand;
 
@@ -90,30 +91,29 @@ class LaravelHyperpay implements Hyperpay
             $this->mada();
         }
 
-        return $this->prepareCheckout($user, $amount, $request);
-        
-        // $redirect_url = url('/'). config('hyperpay.redirect_url');
-        
-        // return array_merge($checkout_data, [
-        //     "shopperResultUrl" => $redirect_url
-        // ]);
+        $trackable_data = array_merge($trackable_data, [
+            'amount' => $amount
+        ]);
+
+        return $this->prepareCheckout($user, $trackable_data, $request);
     }
 
     /**
      *
      *
      */
-    protected function prepareCheckout(Model $user, $amount, $request)
+    protected function prepareCheckout(Model $user, array $trackable_data, $request)
     {
         $this->token = $this->generateToken();
         $this->config['merchantTransactionId'] = $this->token;
         $this->config['userAgent'] = $request->server('HTTP_USER_AGENT');
         $result =  (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
-            $parameters = (new HttpParameters())->postParams($amount, $user, $this->config, $this->billing)
+            $parameters = (new HttpParameters())->postParams(Arr::get($trackable_data, 'amount'), $user, $this->config, $this->billing)
         );
 
         $response = (new HttpResponse($result, null, $parameters))
             ->setUser($user)
+            ->setTrackableData($trackable_data)
             ->addScriptUrl($this->gateway_url)
             ->addShopperResultUrl()
             ->prepareCheckout();

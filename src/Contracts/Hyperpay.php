@@ -10,7 +10,7 @@ interface Hyperpay
     /**
      *
      */
-    public function checkout(Model $user, $amount, $brand, Request $request);
+    public function checkout(array $trackable_data, Model $user, $amount, $brand, Request $request);
 
     /**
      *

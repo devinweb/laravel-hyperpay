@@ -43,7 +43,6 @@ class HttpParameters
         $entityId = $this->getEntityId($checkout_id);
         return ['entityId' => $entityId];
     }
-    
 
     /**
      * Generate the basic user parameters

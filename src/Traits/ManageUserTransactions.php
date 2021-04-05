@@ -1,4 +1,5 @@
 <?php
+
 namespace Devinweb\LaravelHyperpay\Traits;
 
 trait ManageUserTransactions
@@ -11,6 +12,7 @@ trait ManageUserTransactions
     public function transactions()
     {
         $transaction_model = config('hyperpay.transaction_model');
+
         return $this->hasMany($transaction_model, $this->getForeignKey())->orderBy('created_at', 'desc');
     }
 }

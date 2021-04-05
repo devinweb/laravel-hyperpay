@@ -4,7 +4,6 @@ namespace Devinweb\LaravelHyperpay\Http\Controllers;
 
 use App\Billing\HyperPayBilling;
 use Devinweb\LaravelHyperpay\Facades\LaravelHyperpay;
-use Devinweb\LaravelHyperpay\Http\Middleware\VerifyRedirectUrl;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Str;
@@ -18,7 +17,6 @@ class HyperPayPaymentController extends Controller
      */
     public function __construct()
     {
-        // $this->middleware(VerifyRedirectUrl::class);
     }
 
     /**

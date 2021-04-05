@@ -57,7 +57,6 @@ class HttpParameters
      */
     protected function getBodyParameters($amount, Model $user, $heyPerPayConfig): array
     {
-        Log::info(['notificationUrl' => url('/').$heyPerPayConfig['notificationUrl']]);
         $body_parameters = [
             'entityId' => $heyPerPayConfig['entityId'],
             'amount' => $amount,

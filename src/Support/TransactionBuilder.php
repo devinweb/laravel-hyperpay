@@ -1,4 +1,5 @@
 <?php
+
 namespace Devinweb\LaravelHyperpay\Support;
 
 use Devinweb\LaravelHyperpay\Models\Transaction;
@@ -13,7 +14,6 @@ class TransactionBuilder
      */
     protected $owner;
 
-
     /**
      * Create a new transaction builder instance.
      *
@@ -25,7 +25,6 @@ class TransactionBuilder
         $this->owner = $owner;
     }
 
-
     /**
      *@param  array  $transactionData
      *@return \Deviwnweb\LaravelHyperpay\Models\Transaction
@@ -35,35 +34,35 @@ class TransactionBuilder
         $this->currentUserCleanOldPendingTransaction();
 
         $transaction = $this->owner->transactions()->create([
-                    "id" => Arr::get($transactionData, 'merchantTransactionId'),
-                    "user_id" => $this->owner->id,
-                    "checkout_id" => Arr::get($transactionData, 'id'),
-                    "status" => "pending",
-                    "amount" => Arr::get($transactionData, 'amount'),
-                    "currency" => Arr::get($transactionData, 'currency'),
-                    "brand" => $this->getBrand($transactionData['entityId']),
-                    "data" => Arr::get($transactionData, 'result'),
-                    "trackable_data" => Arr::get($transactionData, 'trackable_data'),
-                 ]);
+            'id' => Arr::get($transactionData, 'merchantTransactionId'),
+            'user_id' => $this->owner->id,
+            'checkout_id' => Arr::get($transactionData, 'id'),
+            'status' => 'pending',
+            'amount' => Arr::get($transactionData, 'amount'),
+            'currency' => Arr::get($transactionData, 'currency'),
+            'brand' => $this->getBrand($transactionData['entityId']),
+            'data' => Arr::get($transactionData, 'result'),
+            'trackable_data' => Arr::get($transactionData, 'trackable_data'),
+        ]);
 
         return $transaction;
     }
-
 
     public function findByIdOrCheckoutId($id)
     {
         $transaction_model = config('hyperpay.transaction_model');
         $transaction = app($transaction_model)->whereId($id)->orWhere('checkout_id', $id)->first();
+
         return $transaction;
     }
-
 
     protected function getBrand($entityId)
     {
         if ($entityId == config('hyperpay.entityIdMada')) {
             return 'mada';
         }
-        return "default";
+
+        return 'default';
     }
 
     protected function currentUserCleanOldPendingTransaction()

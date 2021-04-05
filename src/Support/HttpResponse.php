@@ -1,18 +1,19 @@
 <?php
+
 namespace Devinweb\LaravelHyperpay\Support;
 
 use Devinweb\LaravelHyperpay\Events\FailTransaction;
 use Devinweb\LaravelHyperpay\Events\SuccessTransaction;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 final class HttpResponse
 {
     /**
-    * @var Http status
-    */
+     * @var Http status
+     */
     const OK = 200;
     const ERROR = 400;
     const HTTP_UNPROCESSABLE_ENTITY = 422;
@@ -20,50 +21,40 @@ final class HttpResponse
     const HTTP_OK = 200;
 
     /**
-    * @var string pattern
-    */
+     * @var string pattern
+     */
     const SUCCESS_CODE_PATTERN = '/^(000\.000\.|000\.100\.1|000\.[36])/';
     const SUCCESS_MANUAL_REVIEW_CODE_PATTERN = '/^(000\.400\.0|000\.400\.100)/';
 
+    /**
+     * @var TransactionBuilder transaction
+     */
+    protected $transaction;
 
     /**
-    * @var TransactionBuilder transaction
-    */
-    
-    protected $transaction;
-    
-    /**
-    * @var array optionsData
-    */
-    
+     * @var array optionsData
+     */
     protected $optionsData;
-    
-    
+
     /**
-    * @var Model user
-    */
-    
+     * @var Model user
+     */
     protected $user;
-    
+
     /**
-    * @var string script_url
-    */
-    
+     * @var string script_url
+     */
     protected $script_url;
-    
+
     /**
-    * @var string shopperResultUrl
-    */
-    
+     * @var string shopperResultUrl
+     */
     protected $shopperResultUrl;
 
     /**
-    * @var array cart|trackable_data
-    */
-    
+     * @var array cart|trackable_data
+     */
     protected $trackable_data;
-
-
 
     /**
      * Create a new manager instance.
@@ -71,7 +62,7 @@ final class HttpResponse
      * @param  \GuzzleHttp\Client as GuzzleClient  $client
      * @return void
      */
-    public function __construct(Response $response, ?Model $transaction=null, ?array $optionsData = [])
+    public function __construct(Response $response, ?Model $transaction = null, ?array $optionsData = [])
     {
         $this->response = $response;
 
@@ -80,23 +71,21 @@ final class HttpResponse
         $this->optionsData = $optionsData;
     }
 
-
     public function prepareCheckout()
     {
-        $response =  $this->response();
+        $response = $this->response();
         Log::info(['prepare_checkout' => $response]);
         if ($response['status'] == self::HTTP_OK) {
             (new TransactionBuilder($this->user))->create(array_merge($response, array_merge($this->optionsData, ['trackable_data' => $this->trackable_data])));
             $response = array_merge($response, [
                 'script_url' => $this->script_url,
-                'shopperResultUrl' => $this->shopperResultUrl
+                'shopperResultUrl' => $this->shopperResultUrl,
             ]);
         }
 
         return response()->json($response, $response['status']);
     }
-    
-    
+
     public function paymentStatus()
     {
         $response = $this->response();
@@ -104,7 +93,7 @@ final class HttpResponse
         if ($response['status'] == self::HTTP_OK) {
             $this->updateTransaction('success', $response);
         }
-        
+
         if (Arr::has($response, 'body.message')) {
             $this->updateTransaction('cancel', $response);
         }
@@ -117,10 +106,9 @@ final class HttpResponse
      *
      * @return array
      */
-
     public function body()
     {
-        return (array ) json_decode((string) $this->response->getBody(), true);
+        return (array) json_decode((string) $this->response->getBody(), true);
     }
 
     /**
@@ -134,33 +122,34 @@ final class HttpResponse
     }
 
     /**
-     * Add the script url that used in the front end to generate the payment form
+     * Add the script url that used in the front end to generate the payment form.
      *
      * @return $this
      */
     public function addScriptUrl($base_url)
     {
-        $script_url = $base_url. "/v1/paymentWidgets.js?checkoutId={$this->body()['id']}";
+        $script_url = $base_url."/v1/paymentWidgets.js?checkoutId={$this->body()['id']}";
         $this->script_url = $script_url;
+
         return $this;
     }
 
     /**
-     * Add the shopperResultUrl to the response parameters
+     * Add the shopperResultUrl to the response parameters.
      *
      * @return $this
      */
     public function addShopperResultUrl()
     {
-        $redirect_url = url('/'). config('hyperpay.redirect_url');
+        $redirect_url = url('/').config('hyperpay.redirect_url');
 
-        $this->shopperResultUrl= $redirect_url;
+        $this->shopperResultUrl = $redirect_url;
 
         return $this;
     }
 
     /**
-     * Set the given user to create a transaction to him
+     * Set the given user to create a transaction to him.
      *
      * @return $this
      */
@@ -172,7 +161,7 @@ final class HttpResponse
     }
 
     /**
-     * Set Trackable data to be stored in the Transaction then us it in the event dispatched
+     * Set Trackable data to be stored in the Transaction then us it in the event dispatched.
      *
      * @return $this
      */
@@ -182,9 +171,9 @@ final class HttpResponse
 
         return $this;
     }
-    
+
     /**
-     * Get the response final
+     * Get the response final.
      *
      * @return \Illuminate\Support\Facades\Response
      */
@@ -203,9 +192,9 @@ final class HttpResponse
 
             return array_merge($result, ['status' => self::HTTP_UNPROCESSABLE_ENTITY]);
         }
-        return array_merge($body, ['message' => __("failed_message"), 'status' => self::HTTP_UNPROCESSABLE_ENTITY]);
-    }
 
+        return array_merge($body, ['message' => __('failed_message'), 'status' => self::HTTP_UNPROCESSABLE_ENTITY]);
+    }
 
     protected function updateTransaction($status, array $optionData)
     {
@@ -218,10 +207,9 @@ final class HttpResponse
             event(new FailTransaction($optionData));
         }
 
-
         $this->transaction->update([
-            "status" => $status,
-            "data" =>  $optionData
+            'status' => $status,
+            'data' =>  $optionData,
         ]);
     }
 }

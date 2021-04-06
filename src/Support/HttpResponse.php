@@ -69,7 +69,7 @@ final class HttpResponse
     }
 
     /**
-     * Prepare and perform the checkout to generate an id that used to create a from
+     * Prepare and perform the checkout to generate an id that used to create a from.
      *
      * @return \Illuminate\Support\Facades\Response
      */
@@ -88,7 +88,7 @@ final class HttpResponse
     }
 
     /**
-     * Get the payment status
+     * Get the payment status.
      *
      * @return \Illuminate\Support\Facades\Response
      */
@@ -202,7 +202,7 @@ final class HttpResponse
     }
 
     /**
-     * Update the transation and dispatch events for both success and fail transaction
+     * Update the transation and dispatch events for both success and fail transaction.
      *
      * @param int $status
      * @param array $optionData
@@ -213,7 +213,6 @@ final class HttpResponse
     {
         $hyperpay_data = $optionData;
         $trackable_data = $this->transaction->trackable_data;
-
 
         if ($status == 'success') {
             event(new SuccessTransaction(array_merge(

@@ -25,7 +25,7 @@ class TransactionBuilder
     }
 
     /**
-     * Create and clean pending transaction for the given user
+     * Create and clean pending transaction for the given user.
      *
      * @param  array  $transactionData
      *
@@ -51,7 +51,7 @@ class TransactionBuilder
     }
 
     /**
-     * Find the transaction in the database
+     * Find the transaction in the database.
      *
      * @param string $id
      *
@@ -67,7 +67,7 @@ class TransactionBuilder
 
     /**
      * Find the brand (VISA/MASTER OR MADA) based on the entityID
-     * default = VISA/MASTER
+     * default = VISA/MASTER.
      *
      * @param string $entityId
      *
@@ -83,7 +83,7 @@ class TransactionBuilder
     }
 
     /**
-     * Clean the given user pending transaction
+     * Clean the given user pending transaction.
      *
      * @return void
      */

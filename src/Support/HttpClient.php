@@ -37,7 +37,7 @@ final class HttpClient
     }
 
     /**
-     * Create a post sever-to-server request
+     * Create a post sever-to-server request.
      *
      * @param array $parameters
      *
@@ -63,7 +63,7 @@ final class HttpClient
     }
 
     /**
-     * Create a get request to hyperpay used to check the status
+     * Create a get request to hyperpay used to check the status.
      *
      * @param array $parameters
      *

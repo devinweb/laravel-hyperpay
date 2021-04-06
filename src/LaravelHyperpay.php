@@ -42,7 +42,6 @@ class LaravelHyperpay implements Hyperpay
      */
     protected $gateway_url = 'https://test.oppwa.com';
 
-
     /**
      * Create a new manager instance.
      *
@@ -59,7 +58,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Set the mada entityId in the paramaters that used to prepare the checkout
+     * Set the mada entityId in the paramaters that used to prepare the checkout.
      *
      * @return void
      */
@@ -82,7 +81,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Prepare the checkout
+     * Prepare the checkout.
      *
      * @param array $trackable_data
      * @param Model $user
@@ -109,7 +108,7 @@ class LaravelHyperpay implements Hyperpay
 
     /**
      * Define the data used to generate a successful
-     * response from hyperpay to generate the payment form
+     * response from hyperpay to generate the payment form.
      *
      * @param Model $user
      * @param array $trackable_data
@@ -137,7 +136,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Check the payment status using $resourcePath and $checkout_id
+     * Check the payment status using $resourcePath and $checkout_id.
      *
      * @param string $resourcePath
      * @param string $checkout_id
@@ -159,7 +158,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Add merchantTransactionId
+     * Add merchantTransactionId.
      *
      * @param string $id
      *
@@ -173,13 +172,13 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Generate the token that used as merchantTransactionId to generate the payment form
+     * Generate the token that used as merchantTransactionId to generate the payment form.
      *
      * @return string
      */
     private function generateToken()
     {
-        if (!$this->token) {
+        if (! $this->token) {
             return Str::random('64');
         }
     }

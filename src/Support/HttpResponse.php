@@ -198,13 +198,23 @@ final class HttpResponse
 
     protected function updateTransaction($status, array $optionData)
     {
+        $hyperpay_data = $optionData;
+        $trackable_data = $this->transaction->trackable_data;
+
+
         if ($status == 'success') {
-            event(new SuccessTransaction($optionData));
+            event(new SuccessTransaction(array_merge(
+                ['hyperpay_data' => $hyperpay_data],
+                ['trackable_data' => $trackable_data]
+            )));
         }
 
         if ($status == 'cancel') {
             $optionData = $this->transaction->data;
-            event(new FailTransaction($optionData));
+            event(new FailTransaction(array_merge(
+                ['hyperpay_data' => $optionData],
+                ['trackable_data' => $trackable_data]
+            )));
         }
 
         $this->transaction->update([

@@ -139,6 +139,18 @@ LaravelHyperpay::addBilling(new HyperPayBilling())->checkout($trackable_data, $u
 
 ```
 
+You can also generate your own merchantTransactionId and tell the package to use it, by using `addMerchantTransactionId($id)`
+
+```php
+
+use Illuminate\Support\Str;
+
+$id = Str::random('64');
+
+LaravelHyperpay::addMerchantTransactionId($id)->addBilling(new HyperPayBilling())->checkout($trackable_data, $user, $amount, $brand, $request);
+
+```
+
 Next the response returned by the `prepareCheckout` actions
 
 ```json

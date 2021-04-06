@@ -4,9 +4,8 @@ namespace Devinweb\LaravelHyperpay\Support;
 
 use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 
-final class HttpParameters
+class HttpParameters
 {
     /**
      * Get the parameters that used in the request with hyperpay

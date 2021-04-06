@@ -75,7 +75,7 @@ class Transaction extends Model
      */
     public function isPaid()
     {
-        return $this->status == 'paid';
+        return $this->status == 'success';
     }
 
     /**

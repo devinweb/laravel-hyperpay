@@ -37,7 +37,11 @@ class LaravelHyperpay implements Hyperpay
      */
     protected $brand;
 
+    /**
+     * @var string hyperpay host
+     */
     protected $gateway_url = 'https://test.oppwa.com';
+
 
     /**
      * Create a new manager instance.
@@ -54,6 +58,11 @@ class LaravelHyperpay implements Hyperpay
         }
     }
 
+    /**
+     * Set the mada entityId in the paramaters that used to prepare the checkout
+     *
+     * @return void
+     */
     public function mada()
     {
         $this->config['entityId'] = config('hyperpay.entityIdMada');
@@ -72,6 +81,17 @@ class LaravelHyperpay implements Hyperpay
         return $this;
     }
 
+    /**
+     * Prepare the checkout
+     *
+     * @param array $trackable_data
+     * @param Model $user
+     * @param float $amount
+     * @param string $brand
+     * @param Request $request
+     *
+     * @return \GuzzleHttp\Psr7\Response
+     */
     public function checkout(array $trackable_data, Model $user, $amount, $brand, Request $request)
     {
         $this->brand = $brand;
@@ -87,6 +107,16 @@ class LaravelHyperpay implements Hyperpay
         return $this->prepareCheckout($user, $trackable_data, $request);
     }
 
+    /**
+     * Define the data used to generate a successful
+     * response from hyperpay to generate the payment form
+     *
+     * @param Model $user
+     * @param array $trackable_data
+     * @param Request $request
+     *
+     * @return \GuzzleHttp\Psr7\Response
+     */
     protected function prepareCheckout(Model $user, array $trackable_data, $request)
     {
         $this->token = $this->generateToken();
@@ -106,6 +136,14 @@ class LaravelHyperpay implements Hyperpay
         return $response;
     }
 
+    /**
+     * Check the payment status using $resourcePath and $checkout_id
+     *
+     * @param string $resourcePath
+     * @param string $checkout_id
+     *
+     * @return \GuzzleHttp\Psr7\Response
+     */
     public function paymentStatus(string $resourcePath, string $checkout_id)
     {
         $result = (new HttpClient($this->client, $this->gateway_url.$resourcePath, $this->config))->get(
@@ -120,27 +158,29 @@ class LaravelHyperpay implements Hyperpay
         return $response;
     }
 
-    public function isSuccessfulResponse(array $response): bool
+    /**
+     * Add merchantTransactionId
+     *
+     * @param string $id
+     *
+     * @return $this
+     */
+    public function addMerchantTransactionId($id)
     {
-        return false;
+        $this->token = $id;
+
+        return $this;
     }
 
-    public function getMessageFromError(array $response): ?string
-    {
-        return '';
-    }
-
-    public function pending()
-    {
-    }
-
-    public function merchantTransactionId()
-    {
-        return $this->token;
-    }
-
+    /**
+     * Generate the token that used as merchantTransactionId to generate the payment form
+     *
+     * @return string
+     */
     private function generateToken()
     {
-        return Str::random('64');
+        if (!$this->token) {
+            return Str::random('64');
+        }
     }
 }

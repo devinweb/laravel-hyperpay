@@ -7,7 +7,6 @@ use Devinweb\LaravelHyperpay\Events\SuccessTransaction;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
 
 final class HttpResponse
 {

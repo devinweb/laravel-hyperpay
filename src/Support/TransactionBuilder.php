@@ -2,7 +2,6 @@
 
 namespace Devinweb\LaravelHyperpay\Support;
 
-use Devinweb\LaravelHyperpay\Models\Transaction;
 use Illuminate\Support\Arr;
 
 class TransactionBuilder
@@ -56,7 +55,7 @@ class TransactionBuilder
      *
      * @param string $id
      *
-     * @return \Deviwnweb\LaravelHyperpay\Models\Transaction
+     * @return null|\Deviwnweb\LaravelHyperpay\Models\Transaction
      */
     public function findByIdOrCheckoutId($id)
     {

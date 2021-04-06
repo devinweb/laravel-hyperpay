@@ -36,6 +36,13 @@ final class HttpClient
         $this->path = $path;
     }
 
+    /**
+     * Create a post sever-to-server request
+     *
+     * @param array $parameters
+     *
+     * @return Response
+     */
     public function post(array $parameters): Response
     {
         try {
@@ -55,7 +62,14 @@ final class HttpClient
         }
     }
 
-    public function get($parameters): Response
+    /**
+     * Create a get request to hyperpay used to check the status
+     *
+     * @param array $parameters
+     *
+     * @return Response
+     */
+    public function get(array $parameters): Response
     {
         try {
             $response = $this->client->get($this->path, [

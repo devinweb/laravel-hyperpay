@@ -14,8 +14,6 @@ final class HttpResponse
     /**
      * @var Http status
      */
-    const OK = 200;
-    const ERROR = 400;
     const HTTP_UNPROCESSABLE_ENTITY = 422;
     const HTTP_BAD_REQUEST = 400;
     const HTTP_OK = 200;
@@ -71,10 +69,14 @@ final class HttpResponse
         $this->optionsData = $optionsData;
     }
 
+    /**
+     * Prepare and perform the checkout to generate an id that used to create a from
+     *
+     * @return \Illuminate\Support\Facades\Response
+     */
     public function prepareCheckout()
     {
         $response = $this->response();
-        Log::info(['prepare_checkout' => $response]);
         if ($response['status'] == self::HTTP_OK) {
             (new TransactionBuilder($this->user))->create(array_merge($response, array_merge($this->optionsData, ['trackable_data' => $this->trackable_data])));
             $response = array_merge($response, [
@@ -86,10 +88,14 @@ final class HttpResponse
         return response()->json($response, $response['status']);
     }
 
+    /**
+     * Get the payment status
+     *
+     * @return \Illuminate\Support\Facades\Response
+     */
     public function paymentStatus()
     {
         $response = $this->response();
-        Log::info(['payment_status' => $response]);
         if ($response['status'] == self::HTTP_OK) {
             $this->updateTransaction('success', $response);
         }
@@ -196,6 +202,14 @@ final class HttpResponse
         return array_merge($body, ['message' => __('failed_message'), 'status' => self::HTTP_UNPROCESSABLE_ENTITY]);
     }
 
+    /**
+     * Update the transation and dispatch events for both success and fail transaction
+     *
+     * @param int $status
+     * @param array $optionData
+     *
+     * @return void
+     */
     protected function updateTransaction($status, array $optionData)
     {
         $hyperpay_data = $optionData;

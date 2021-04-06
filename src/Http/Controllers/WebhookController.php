@@ -10,6 +10,6 @@ class WebhookController extends Controller
 {
     public function handleWebhook(Request $request)
     {
-        Log::info(['hook' => $request->all()]);
+        // hook logic
     }
 }

@@ -6,7 +6,7 @@ use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
-class HttpParameters
+final class HttpParameters
 {
     /**
      * Get the parameters that used in the request with hyperpay
@@ -26,8 +26,6 @@ class HttpParameters
         $billing_parameters = $this->getBillingParameters($billing);
 
         $parameters = array_merge($body, $billing_parameters);
-
-        Log::info(['checkout_parameters' => $parameters]);
 
         return $parameters;
     }

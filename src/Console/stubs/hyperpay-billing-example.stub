@@ -6,22 +6,18 @@ use Devinweb\LaravelHyperpay\Contracts\BillingInterface;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HyperPayBilling implements BillingInterface
 {
     protected $request;
 
-    protected $lat;
-
-    protected $lon;
+    protected $latlng;
 
     public function __construct(Request $request)
     {
         $this->request = $request;
-        $latlng = $this->getLatLng($request->ip());
-        $latlng = explode(",", $latlng);
-        $this->lat = $latlng[0];
-        $this->lon = $latlng[1];
+        $this->latlng = $this->getLatLng($request->ip());
     }
     /**
      * Get the billing data.
@@ -36,20 +32,66 @@ class HyperPayBilling implements BillingInterface
 
     protected function GetAddressFromLatLng()
     {
-        $response =  Http::get('https://nominatim.openstreetmap.org/reverse?format=json&lat='.$this->lat.'&lon='.$this->lon);
-        return [
-            "billing.street1" => Arr::get($response->json(), 'address.suburb'),
-            "billing.city" => Arr::get($response->json(), 'address.city'),
-            "billing.state" => Arr::get($response->json(), 'address.state_district'),
-            "billing.country" => strtoupper(Arr::get($response->json(), 'address.country_code')),
-            "billing.postcode" => Arr::get($response->json(), 'address.postcode'),
-        ];
+        $response =  Http::get('https://maps.googleapis.com/maps/api/geocode/json?latlng='.$this->latlng.'&key=AIzaSyAFHz-7hKCyzYx2kWfY-S_kSi6Hm8pZ8jk');
+        
+        $array = $this->getBillingFromGeocode($response->json());
+       
+        return $array;
     }
 
     protected function getLatLng($ip)
     {
-        $ip = "160.177.139.50";
+        // $ip = "151.254.221.73";
         $response = Http::get('https://ipinfo.io/'.$ip)['loc'];
         return $response;
+    }
+
+    protected function defaultBilling()
+    {
+        return [
+            "billing.street1" => "3089 Al-Matt'haf Ln, Al Balad District, Jeddah 22236 7393, Saudi Arabia",
+            "billing.city" => "Jeddah",
+            "billing.state" => "Makkah Province",
+            "billing.country" => "SA",
+        ];
+    }
+
+    protected function getBillingFromGeocode(array $response): array
+    {
+        $billing = [
+            'billing.street1' => '',
+            'billing.city' => '',
+            'billing.state' => '',
+            'billing.country' => '',
+            'billing.postcode' => ''
+        ];
+
+        if (Arr::has($response, 'results')) {
+            $result = $response['results'];
+
+            $address_components = Arr::has($result[0], 'address_components') ? $result[0]['address_components']: [];
+            
+            $billing['billing.street1'] = Arr::has($result[0], 'formatted_address') ? $result[0]['formatted_address']: '';
+
+            for ($i = 0; $i < count($address_components); $i++) {
+                $child_address_components = $address_components[$i];
+                switch (Arr::get($child_address_components, 'types')[0]) {
+                    case 'locality':
+                        $billing['billing.city'] = Arr::get($child_address_components, 'long_name');
+                        break;
+                    case 'administrative_area_level_1':
+                        $billing['billing.state'] = Arr::get($child_address_components, 'long_name');
+                        break;
+                    case 'country':
+                        $billing['billing.country'] = Arr::get($child_address_components, 'short_name');
+                        break;
+                    // case 'postal_code':
+                    //     $billing['billing.postcode'] = Arr::get($child_address_components, 'long_name');
+                    //     break;
+                }
+            }
+        }
+
+        return collect($billing)->filter()->all();
     }
 }

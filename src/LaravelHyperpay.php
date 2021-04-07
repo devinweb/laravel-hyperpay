@@ -178,8 +178,6 @@ class LaravelHyperpay implements Hyperpay
      */
     private function generateToken()
     {
-        if (! $this->token) {
-            return Str::random('64');
-        }
+        return ($this->token) ?: Str::random('64');
     }
 }

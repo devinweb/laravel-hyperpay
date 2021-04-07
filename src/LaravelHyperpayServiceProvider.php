@@ -31,8 +31,8 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
             'namespace' => 'Devinweb\LaravelHyperpay\Http\Controllers',
             'as' => 'hyperpay.',
         ], function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-            });
+            $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        });
     }
 
     /**
@@ -43,7 +43,6 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
     protected function registerResources()
     {
         $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'hyperpay');
     }
 
     /**

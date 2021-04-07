@@ -214,6 +214,12 @@ final class HttpResponse
         $hyperpay_data = $optionData;
         $trackable_data = $this->transaction->trackable_data;
 
+        $this->transaction->update([
+            'status' => $status,
+            'data' =>  $optionData,
+        ]);
+
+
         if ($status == 'success') {
             event(new SuccessTransaction(array_merge(
                 ['hyperpay_data' => $hyperpay_data],
@@ -222,16 +228,10 @@ final class HttpResponse
         }
 
         if ($status == 'cancel') {
-            $optionData = $this->transaction->data;
             event(new FailTransaction(array_merge(
                 ['hyperpay_data' => $optionData],
                 ['trackable_data' => $trackable_data]
             )));
         }
-
-        $this->transaction->update([
-            'status' => $status,
-            'data' =>  $optionData,
-        ]);
     }
 }

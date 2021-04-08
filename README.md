@@ -223,7 +223,80 @@ class PaymentController extends Controller
 | Devinweb\LaravelHyperpay\Events\SuccessTransaction | success transaction |
 | Devinweb\LaravelHyperpay\Events\FailTransaction    | fail transaction    |
 
-Each event of them contains the `trackable_data` that used to prepare the checkout/
+Each event of them contains the `trackable_data` and `hyperpay_data` that used to prepare the checkout
+
+##### Listener exemple
+
+First we start by creating a new listener using
+
+```shell
+php artisan make:listener TransactionSuccessListener
+```
+
+After that go to `app/Providers/EventServiceProvider` and register the event with your listener
+
+```php
+
+class EventServiceProvider extends ServiceProvider
+{
+    /**
+     * The event listener mappings for the application.
+     *
+     * @var array
+     */
+    protected $listen = [
+        Registered::class => [
+            SendEmailVerificationNotification::class,
+        ],
+         'Devinweb\LaravelHyperpay\Events\SuccessTransaction' => [
+            'App\Listeners\TransactionSuccessListener',
+        ],
+    ];
+
+    //
+}
+
+```
+
+In each success transaction `laravel-hyperpay` package fire an event with the necessary data take a look at our `TransactionSuccessListener` class.
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Log;
+
+class TransactionSuccessListener
+{
+    /**
+     * Create the event listener.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Handle the event.
+     *
+     * @param  object  $event
+     * @return void
+     */
+    public function handle($event)
+    {
+       $hyperpay_data =  $event->transaction['hyperpay_data'];
+
+       $trackable_data =  $event->transaction['trackable_data'];
+    }
+}
+```
+
+The same you can do with `Devinweb\LaravelHyperpay\Events\FailTransaction` event.
 
 ### Testing
 
@@ -252,10 +325,6 @@ If you discover any security related issues, please email imad@devinweb.com inst
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-## Laravel Package Boilerplate
+## Laravel hyperpay Boilerplate
 
-This package was generated using the [Laravel Package Boilerplate](https://laravelpackageboilerplate.com).
-
-```
-
-```
+You can use this repository to check the integration of the package [laravel-hyperpay-boilerplate](https://github.com/devinweb/laravel-hyperpay-boilerplate).

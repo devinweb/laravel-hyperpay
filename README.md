@@ -199,7 +199,7 @@ You can also add `redirect_url` dynamically via `addRedirectUrl($url)` that can 
 
 ```php
 
-$redirect_url = parse_url($req->headers->get('origin'), PHP_URL_HOST). '/finalize';
+$redirect_url = $req->headers->get('origin'). '/finalize';
 
 LaravelHyperpay::addRedirectUrl($redirect_url)->addBilling(new HyperPayBilling())->checkout($trackable_data, $user, $amount, $brand, $request);
 ```

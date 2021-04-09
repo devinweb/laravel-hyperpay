@@ -195,6 +195,15 @@ return [
 
 ```
 
+You can also add `redirect_url` dynamically via `addRedirectUrl($url)` that can override the default config `redirect_url` if you want to add a dynamic url like if you use multi-tenant or add some parameters to your redirection url.
+
+```php
+
+$redirect_url = parse_url($req->headers->get('origin'), PHP_URL_HOST). '/finalize';
+
+LaravelHyperpay::addRedirectUrl($redirect_url)->addBilling(new HyperPayBilling())->checkout($trackable_data, $user, $amount, $brand, $request);
+```
+
 After redirection you can use an action the handle the finalize step
 
 ```php

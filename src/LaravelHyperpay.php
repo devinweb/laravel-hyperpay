@@ -36,6 +36,11 @@ class LaravelHyperpay implements Hyperpay
      * @var string brand
      */
     protected $brand;
+    
+    /**
+     * @var string redirect_url
+     */
+    protected $redirect_url;
 
     /**
      * @var string hyperpay host
@@ -79,6 +84,7 @@ class LaravelHyperpay implements Hyperpay
 
         return $this;
     }
+    
 
     /**
      * Prepare the checkout.
@@ -129,7 +135,7 @@ class LaravelHyperpay implements Hyperpay
             ->setUser($user)
             ->setTrackableData($trackable_data)
             ->addScriptUrl($this->gateway_url)
-            ->addShopperResultUrl()
+            ->addShopperResultUrl($this->redirect_url)
             ->prepareCheckout();
 
         return $response;
@@ -167,6 +173,20 @@ class LaravelHyperpay implements Hyperpay
     public function addMerchantTransactionId($id)
     {
         $this->token = $id;
+
+        return $this;
+    }
+
+    /**
+     * Add redirection url to the shopper to finalize the payment
+     *
+     * @param string $url
+     *
+     * @return $this
+     */
+    public function addRedirectUrl($url)
+    {
+        $this->redirect_url = $url;
 
         return $this;
     }

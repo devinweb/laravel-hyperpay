@@ -144,11 +144,11 @@ final class HttpResponse
      *
      * @return $this
      */
-    public function addShopperResultUrl()
+    public function addShopperResultUrl($redirect_url)
     {
-        $redirect_url = url('/').config('hyperpay.redirect_url');
+        $url = $redirect_url ?:config('hyperpay.redirect_url');
 
-        $this->shopperResultUrl = $redirect_url;
+        $this->shopperResultUrl = $url;
 
         return $this;
     }

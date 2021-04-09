@@ -219,7 +219,6 @@ final class HttpResponse
             'data' =>  $optionData,
         ]);
 
-
         if ($status == 'success') {
             event(new SuccessTransaction(array_merge(
                 ['hyperpay_data' => $hyperpay_data],

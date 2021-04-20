@@ -7,6 +7,7 @@ use Devinweb\LaravelHyperpay\Events\SuccessTransaction;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 final class HttpResponse
 {
@@ -66,6 +67,8 @@ final class HttpResponse
         $this->transaction = $transaction;
 
         $this->optionsData = $optionsData;
+
+        $this->checkResultStatus();
     }
 
     /**
@@ -232,5 +235,21 @@ final class HttpResponse
                 ['trackable_data' => $trackable_data]
             )));
         }
+    }
+
+
+    /**
+     * Check the response status get it from hyperpay
+     * if bad convert it to the ValidationException
+     *
+     * @return mixed
+     */
+    protected function checkResultStatus()
+    {
+        if ($this->status() == 400) {
+            throw ValidationException::withMessages($this->response());
+        }
+
+        return $this;
     }
 }

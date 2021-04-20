@@ -149,7 +149,7 @@ final class HttpResponse
      */
     public function addShopperResultUrl($redirect_url)
     {
-        $url = $redirect_url ?:config('hyperpay.redirect_url');
+        $url = $redirect_url ?: config('hyperpay.redirect_url');
 
         $this->shopperResultUrl = $url;
 
@@ -237,10 +237,9 @@ final class HttpResponse
         }
     }
 
-
     /**
      * Check the response status get it from hyperpay
-     * if bad convert it to the ValidationException
+     * if bad convert it to the ValidationException.
      *
      * @return mixed
      */

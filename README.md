@@ -1,3 +1,5 @@
+<p align="center"><img src="/art/socialcard.png" alt="Laravel Hyperpay"></p>
+
 # Laravel HyperPay
 
 <a href="https://github.styleci.io/repos/347104704"><img src="https://github.styleci.io/repos/347104704/shield?branch=master" alt="StyleCI Shield"></a>

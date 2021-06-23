@@ -36,7 +36,7 @@ class LaravelHyperpay implements Hyperpay
      * @var string brand
      */
     protected $brand;
-    
+
     /**
      * @var string redirect_url
      */
@@ -84,7 +84,6 @@ class LaravelHyperpay implements Hyperpay
 
         return $this;
     }
-    
 
     /**
      * Prepare the checkout.
@@ -178,7 +177,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Add redirection url to the shopper to finalize the payment
+     * Add redirection url to the shopper to finalize the payment.
      *
      * @param string $url
      *

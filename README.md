@@ -2,6 +2,7 @@
 
 # Laravel HyperPay
 
+[![tests](https://github.com/devinweb/laravel-hyperpay/actions/workflows/tests.yml/badge.svg)](https://github.com/devinweb/laravel-hyperpay/actions/workflows/tests.yml)
 <a href="https://github.styleci.io/repos/347104704"><img src="https://github.styleci.io/repos/347104704/shield?branch=master" alt="StyleCI Shield"></a>
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/devinweb/laravel-hyperpay.svg?style=flat-square)](https://packagist.org/packages/devinweb/laravel-hyperpay)
 [![Total Downloads](https://img.shields.io/packagist/dt/devinweb/laravel-hyperpay.svg?style=flat-square)](https://packagist.org/packages/devinweb/laravel-hyperpay)

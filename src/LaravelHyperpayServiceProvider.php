@@ -17,6 +17,7 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerResources();
         $this->registerPublishing();
+        $this->registerMigrations();
     }
 
     /**
@@ -66,6 +67,18 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
             $this->commands([
                 BillingCommand::class,
             ]);
+        }
+    }
+
+    /**
+     * Register the package migrations.
+     *
+     * @return void
+     */
+    protected function registerMigrations()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
 

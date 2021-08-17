@@ -27,12 +27,11 @@ jobs:
               with:
                   php-version: ${{ matrix.php }}
                   extensions: dom, curl, libxml, mbstring, zip
-                  tools: composer:v2
+                  tools: composer:v1
                   coverage: none
 
             - name: Install dependencies
               run: |
-                  composer require "illuminate/contracts=${{ matrix.laravel }}" --no-update
                   composer update --prefer-dist --no-interaction --no-progress
 
             - name: Execute tests

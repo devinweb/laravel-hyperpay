@@ -2,13 +2,12 @@
 
 namespace Devinweb\LaravelHyperpay\Tests\Fixtures;
 
-use Illuminate\Foundation\Auth\User as Model;
 use Devinweb\LaravelHyperpay\Traits\ManageUserTransactions;
+use Illuminate\Foundation\Auth\User as Model;
 
 class User extends Model
 {
     use ManageUserTransactions;
-
 
     protected $guarded = [];
 

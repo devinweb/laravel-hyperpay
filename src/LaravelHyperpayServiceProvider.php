@@ -70,7 +70,6 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
         }
     }
 
-
     /**
      * Register the package migrations.
      *
@@ -82,7 +81,6 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         }
     }
-
 
     /**
      * Register the application services.

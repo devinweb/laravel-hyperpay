@@ -14,7 +14,6 @@ class CreateTransactionsTable extends Migration
     public function up()
     {
         Schema::create('transactions', function (Blueprint $table) {
-            
             $table->string('id')->primary();
             $table->string('user_id');
             $table->string('checkout_id')->unique();

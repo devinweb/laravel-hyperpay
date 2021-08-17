@@ -2,8 +2,8 @@
 
 namespace Devinweb\LaravelHyperpay\Tests;
 
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 
 class BillingCommandTest extends TestCase
 {

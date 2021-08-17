@@ -3,38 +3,36 @@
 namespace Devinweb\LaravelHyperpay\Tests;
 
 use Devinweb\LaravelHyperpay\LaravelHyperpayServiceProvider;
-use Orchestra\Testbench\TestCase as OrchestraTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Devinweb\LaravelHyperpay\Tests\Fixtures\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-  use RefreshDatabase;
+    use RefreshDatabase;
 
-  public function setUp(): void
-  {
+    public function setUp(): void
+    {
+        parent::setUp();
+        // additional setup
+    }
 
-    parent::setUp();
-    // additional setup
-  }
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadLaravelMigrations();
+    }
 
-  protected function defineDatabaseMigrations()
-  {
-    $this->loadLaravelMigrations();
-  }
-    
-  protected function getPackageProviders($app)
-  {
-    return [LaravelHyperpayServiceProvider::class];
-  }
+    protected function getPackageProviders($app)
+    {
+        return [LaravelHyperpayServiceProvider::class];
+    }
 
-  protected function getEnvironmentSetUp($app)
-  {
-    // perform environment setup
-  }
+    protected function getEnvironmentSetUp($app)
+    {
+        // perform environment setup
+    }
 
-
-  protected function createCustomer($description = 'imad', array $options = []): User
+    protected function createCustomer($description = 'imad', array $options = []): User
     {
         return User::create(array_merge([
             'email' => "{$description}@hyperpay-laravel.com",

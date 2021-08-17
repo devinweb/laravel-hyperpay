@@ -5,8 +5,7 @@ namespace Devinweb\LaravelHyperpay\Support;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Response;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
+
 final class HttpClient
 {
     /**

@@ -129,7 +129,7 @@ class LaravelHyperpay implements Hyperpay
         $result = (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
             $parameters = (new HttpParameters())->postParams(Arr::get($trackable_data, 'amount'), $user, $this->config, $this->billing)
         );
-
+        
         $response = (new HttpResponse($result, null, $parameters))
             ->setUser($user)
             ->setTrackableData($trackable_data)

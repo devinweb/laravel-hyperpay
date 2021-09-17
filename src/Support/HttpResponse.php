@@ -207,9 +207,8 @@ final class HttpResponse
     /**
      * Update the transation and dispatch events for both success and fail transaction.
      *
-     * @param int $status
-     * @param array $optionData
-     *
+     * @param  int  $status
+     * @param  array  $optionData
      * @return void
      */
     protected function updateTransaction($status, array $optionData)

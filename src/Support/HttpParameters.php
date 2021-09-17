@@ -11,11 +11,10 @@ class HttpParameters
      * Get the parameters that used in the request with hyperpay
      * to initilize the transaction and generate the form.
      *
-     * @param float $amount
-     * @param Model $user
+     * @param  float  $amount
+     * @param  Model  $user
      * @param array hyperpay config file with extra data added during the process
-     * @param \Devinweb\LaravelHyperpay\Contracts\BillingInterface $billing
-     *
+     * @param  \Devinweb\LaravelHyperpay\Contracts\BillingInterface  $billing
      * @return array
      */
     public function postParams($amount, $user, $heyPerPayConfig, $billing): array
@@ -32,8 +31,7 @@ class HttpParameters
     /**
      * Get the entity id base on the checkout id of its for VISA/MASTER or MADA.
      *
-     * @param string $checkout_id
-     *
+     * @param  string  $checkout_id
      * @return array
      */
     public function getParams($checkout_id): array
@@ -46,10 +44,9 @@ class HttpParameters
     /**
      * Generate the basic user parameters.
      *
-     * @param float $amount
-     * @param Model $user
+     * @param  float  $amount
+     * @param  Model  $user
      * @param array hyperpay config file with extra data added during the process
-     *
      * @return array
      */
     protected function getBodyParameters($amount, Model $user, $heyPerPayConfig): array
@@ -79,8 +76,7 @@ class HttpParameters
     /**
      * Get the billing data from the Billing class if a user generate one.
      *
-     * @param Devinweb\LaravelHyperpay\Contracts\BillingInterface $billing
-     *
+     * @param  Devinweb\LaravelHyperpay\Contracts\BillingInterface  $billing
      * @return array
      */
     protected function getBillingParameters($billing): array
@@ -95,8 +91,7 @@ class HttpParameters
     /**
      * Find the entityId from the transaction if its for MADA of else.
      *
-     * @param string $id transaction id
-     *
+     * @param  string  $id  transaction id
      * @return string
      */
     protected function getEntityId($id)

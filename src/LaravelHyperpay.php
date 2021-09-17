@@ -74,7 +74,8 @@ class LaravelHyperpay implements Hyperpay
 
     /**
      * Add billing data to the payment body.
-     * @param BillingInterface $billing;
+     *
+     * @param  BillingInterface  $billing;
      *
      * return $this
      */
@@ -88,12 +89,11 @@ class LaravelHyperpay implements Hyperpay
     /**
      * Prepare the checkout.
      *
-     * @param array $trackable_data
-     * @param Model $user
-     * @param float $amount
-     * @param string $brand
-     * @param Request $request
-     *
+     * @param  array  $trackable_data
+     * @param  Model  $user
+     * @param  float  $amount
+     * @param  string  $brand
+     * @param  Request  $request
      * @return \GuzzleHttp\Psr7\Response
      */
     public function checkout(array $trackable_data, Model $user, $amount, $brand, Request $request)
@@ -115,10 +115,9 @@ class LaravelHyperpay implements Hyperpay
      * Define the data used to generate a successful
      * response from hyperpay to generate the payment form.
      *
-     * @param Model $user
-     * @param array $trackable_data
-     * @param Request $request
-     *
+     * @param  Model  $user
+     * @param  array  $trackable_data
+     * @param  Request  $request
      * @return \GuzzleHttp\Psr7\Response
      */
     protected function prepareCheckout(Model $user, array $trackable_data, $request)
@@ -143,9 +142,8 @@ class LaravelHyperpay implements Hyperpay
     /**
      * Check the payment status using $resourcePath and $checkout_id.
      *
-     * @param string $resourcePath
-     * @param string $checkout_id
-     *
+     * @param  string  $resourcePath
+     * @param  string  $checkout_id
      * @return \GuzzleHttp\Psr7\Response
      */
     public function paymentStatus(string $resourcePath, string $checkout_id)
@@ -165,8 +163,7 @@ class LaravelHyperpay implements Hyperpay
     /**
      * Add merchantTransactionId.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return $this
      */
     public function addMerchantTransactionId($id)
@@ -179,8 +176,7 @@ class LaravelHyperpay implements Hyperpay
     /**
      * Add redirection url to the shopper to finalize the payment.
      *
-     * @param string $url
-     *
+     * @param  string  $url
      * @return $this
      */
     public function addRedirectUrl($url)

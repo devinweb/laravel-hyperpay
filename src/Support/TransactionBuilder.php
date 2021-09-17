@@ -28,7 +28,6 @@ class TransactionBuilder
      * Create and clean pending transaction for the given user.
      *
      * @param  array  $transactionData
-     *
      * @return \Deviwnweb\LaravelHyperpay\Models\Transaction
      */
     public function create(array $transactionData)
@@ -53,8 +52,7 @@ class TransactionBuilder
     /**
      * Find the transaction in the database.
      *
-     * @param string $id
-     *
+     * @param  string  $id
      * @return null|\Deviwnweb\LaravelHyperpay\Models\Transaction
      */
     public function findByIdOrCheckoutId($id)
@@ -69,8 +67,7 @@ class TransactionBuilder
      * Find the brand (VISA/MASTER OR MADA) based on the entityID
      * default = VISA/MASTER.
      *
-     * @param string $entityId
-     *
+     * @param  string  $entityId
      * @return string
      */
     protected function getBrand($entityId)

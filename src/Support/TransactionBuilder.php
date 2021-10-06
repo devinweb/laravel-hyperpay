@@ -3,6 +3,7 @@
 namespace Devinweb\LaravelHyperpay\Support;
 
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 class TransactionBuilder
 {
@@ -59,6 +60,10 @@ class TransactionBuilder
     {
         $transaction_model = config('hyperpay.transaction_model');
         $transaction = app($transaction_model)->whereId($id)->orWhere('checkout_id', $id)->first();
+
+        if (! $transaction) {
+            throw ValidationException::withMessages([__('invalid_checkout_id')]);
+        }
 
         return $transaction;
     }

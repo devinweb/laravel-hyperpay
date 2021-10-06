@@ -19,6 +19,12 @@ final class HttpResponse
     const HTTP_OK = 200;
 
     /**
+     * @var Transaction status
+     */
+    const TRANSACTION_CANCEL = 'cancel';
+    const TRANSACTION_SUCCESS = 'success';
+
+    /**
      * @var string pattern
      */
     const SUCCESS_CODE_PATTERN = '/^(000\.000\.|000\.100\.1|000\.[36])/';
@@ -102,7 +108,7 @@ final class HttpResponse
             $this->updateTransaction('success', $response);
         }
 
-        if (Arr::has($response, 'message')) {
+        if ($response['transaction_status'] === self::TRANSACTION_CANCEL) {
             $this->updateTransaction('cancel', $response);
         }
 
@@ -190,12 +196,12 @@ final class HttpResponse
         $body = $this->body();
         if (Arr::has($body, 'result.code')) {
             $message = Arr::get($body, 'result.description');
-            $result = array_merge($body, ['message' => $message]);
+            $result = array_merge($body, ['message' => $message, 'transaction_status' => self::TRANSACTION_CANCEL]);
             if (preg_match(self::SUCCESS_CODE_PATTERN, Arr::get($body, 'result.code'))
                 || preg_match(self::SUCCESS_MANUAL_REVIEW_CODE_PATTERN, Arr::get($body, 'result.code'))
                 || Arr::get($body, 'result.code') == '000.200.100'
                 ) {
-                return array_merge($result, ['status' => self::HTTP_OK]);
+                return array_merge($result, ['transaction_status' => self::TRANSACTION_SUCCESS, 'status' => self::HTTP_OK]);
             }
 
             return array_merge($result, ['status' => self::HTTP_UNPROCESSABLE_ENTITY]);

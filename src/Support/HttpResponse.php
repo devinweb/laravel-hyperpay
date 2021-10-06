@@ -102,7 +102,7 @@ final class HttpResponse
             $this->updateTransaction('success', $response);
         }
 
-        if (Arr::has($response, 'body.message')) {
+        if (Arr::has($response, 'message')) {
             $this->updateTransaction('cancel', $response);
         }
 

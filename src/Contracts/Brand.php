@@ -1,8 +1,8 @@
 <?php
 
-namespace Devinweb\LaravelHyperpay\Contracts\Brand;
+namespace Devinweb\LaravelHyperpay\Contracts;
 
-interface BrandInterface
+interface Brand
 {
     public function getEntityId(): string;
 }

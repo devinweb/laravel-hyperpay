@@ -5,7 +5,6 @@ namespace Devinweb\LaravelHyperpay\Tests;
 use Devinweb\LaravelHyperpay\LaravelHyperpayServiceProvider;
 use Devinweb\LaravelHyperpay\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
@@ -19,8 +18,8 @@ abstract class TestCase extends OrchestraTestCase
     }
 
     protected function defineDatabaseMigrations()
-    {   
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations'); 
+    {
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadLaravelMigrations();
     }
 

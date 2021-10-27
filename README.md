@@ -19,16 +19,16 @@ composer require devinweb/laravel-hyperpay
 
 ## Database migration
 
-`Laravel-hyperpay` provides a migration to handle its own transaction, don't forget to run the migration after installation
-
-```bash
-php artisan migrate
-```
-
-If you want to make an update or change the path of the migration, you can publish it using `vendor:publish`
+`Laravel-hyperpay` provides a migration to handle its own transaction, don't forget to publish the migration after installation
 
 ```bash
 php artisan vendor:publish --tag="hyperpay-migrations"
+```
+
+Then migrate
+
+```bash
+php artisan migrate
 ```
 
 This migration has a model named `Transaction`, if your app use [multi-tenancy](https://tenancy.dev/docs/hyn/5.5/installation), you can create a new transaction model based on the `hyperpay transaction` model.

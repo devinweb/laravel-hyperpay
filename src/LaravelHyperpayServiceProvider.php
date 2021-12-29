@@ -69,7 +69,6 @@ class LaravelHyperpayServiceProvider extends ServiceProvider
         }
     }
 
-
     /**
      * Register the application services.
      */

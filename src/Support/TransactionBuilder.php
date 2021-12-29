@@ -37,7 +37,7 @@ class TransactionBuilder
 
         $transaction = $this->owner->transactions()->create([
             'id' => Arr::get($transactionData, 'merchantTransactionId'),
-            'user_id' => $this->owner->id,
+            $this->owner->getForeignKey() => $this->owner->id,
             'checkout_id' => Arr::get($transactionData, 'id'),
             'status' => 'pending',
             'amount' => Arr::get($transactionData, 'amount'),

@@ -9,8 +9,6 @@ use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
-    use RefreshDatabase;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -29,7 +27,12 @@ abstract class TestCase extends OrchestraTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        // perform environment setup
+
+        // import the CreatePostsTable class from the migration
+        include_once __DIR__ . '/../database/migrations/create_transactions_table.php.stub';
+
+        // run the up() method of that migration class
+        (new \CreateTransactionsTable)->up();
     }
 
     protected function createCustomer($description = 'imad', array $options = []): User

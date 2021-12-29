@@ -10,6 +10,7 @@ use Devinweb\LaravelHyperpay\Tests\Fixtures\HyperPayResponses;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 
 class PaymentStatusTest extends TestCase

@@ -29,11 +29,11 @@ abstract class TestCase extends OrchestraTestCase
     protected function getEnvironmentSetUp($app)
     {
 
-        // import the CreatePostsTable class from the migration
-        include_once __DIR__ . '/../database/migrations/create_transactions_table.php.stub';
+        // // import the CreatePostsTable class from the migration
+        // include_once __DIR__ . '/../database/migrations/create_transactions_table.php.stub';
 
-        // run the up() method of that migration class
-        (new \CreateTransactionsTable)->up();
+        // // run the up() method of that migration class
+        // (new \CreateTransactionsTable)->up();
     }
 
     protected function createCustomer($description = 'imad', array $options = []): User

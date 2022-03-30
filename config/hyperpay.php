@@ -5,6 +5,8 @@ return [
 
     'entityIdMada' => env('ENTITY_ID_MADA'),
 
+    'entityIdApplePay' => env('ENTITY_ID_APPLE_PAY'),
+
     'entityId' => env('ENTITY_ID'),
 
     'access_token' => env('ACCESS_TOKEN'),

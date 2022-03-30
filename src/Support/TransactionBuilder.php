@@ -33,7 +33,7 @@ class TransactionBuilder
      */
     public function create(array $transactionData)
     {
-        $this->currentUserCleanOldPendingTransaction();
+        $this->currentUserCleanOldPendingTransaction($transactionData);
 
         $transaction = $this->owner->transactions()->create([
             'id' => Arr::get($transactionData, 'merchantTransactionId'),
@@ -81,6 +81,10 @@ class TransactionBuilder
             return 'mada';
         }
 
+        if ($entityId == config('hyperpay.entityIdApplePay')) {
+            return 'applepay';
+        }
+
         return 'default';
     }
 
@@ -89,9 +93,9 @@ class TransactionBuilder
      *
      * @return void
      */
-    protected function currentUserCleanOldPendingTransaction()
+    protected function currentUserCleanOldPendingTransaction(array $transactionData)
     {
-        $transaction = $this->owner->transactions()->where('status', 'pending')->first();
+        $transaction = $this->owner->transactions()->where('status', 'pending')->whereBrand($this->getBrand($transactionData['entityId']))->first();
         if ($transaction) {
             $transaction->delete();
         }

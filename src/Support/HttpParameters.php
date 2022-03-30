@@ -97,7 +97,7 @@ class HttpParameters
     protected function getEntityId($id)
     {
         $transaction = (new TransactionBuilder())->findByIdOrCheckoutId($id);
-        
+
         $entityId = config('hyperpay.entityId');
 
         if ($transaction->brand === 'mada') {

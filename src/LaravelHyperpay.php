@@ -71,7 +71,7 @@ class LaravelHyperpay implements Hyperpay
     {
         $this->config['entityId'] = config('hyperpay.entityIdMada');
     }
-    
+
     /**
      * Set the apple pay entityId in the parameters that used to prepare the checkout.
      *
@@ -81,6 +81,7 @@ class LaravelHyperpay implements Hyperpay
     {
         $this->config['entityId'] = config('hyperpay.entityIdApplePay');
     }
+
     /**
      * Add billing data to the payment body.
      *
@@ -112,7 +113,7 @@ class LaravelHyperpay implements Hyperpay
         if (strtolower($this->brand) == 'mada') {
             $this->mada();
         }
-        
+
         if (strtolower($this->brand) == 'applepay') {
             $this->setApplePayEntityId();
         }

@@ -66,9 +66,6 @@ class HttpParameters
             'customer.browser.language' => config('app.locale'),
         ];
 
-        if ($heyPerPayConfig['sandboxMode']) {
-            $body_parameters['testMode'] = 'EXTERNAL';
-        }
 
         return $body_parameters;
     }

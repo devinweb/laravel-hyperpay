@@ -116,6 +116,18 @@ final class HttpResponse
     }
 
     /**
+     * Get the recurring payment response.
+     *
+     * @return \Illuminate\Support\Facades\Response
+     */
+    public function recurringPayment()
+    {
+        $response = $this->response();
+
+        return  response()->json($response, $response['status']);
+    }
+
+    /**
      * Get the body of the response.
      *
      * @return array

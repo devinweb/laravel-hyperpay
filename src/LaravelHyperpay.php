@@ -47,6 +47,12 @@ class LaravelHyperpay implements Hyperpay
      */
     protected $gateway_url = 'https://test.oppwa.com';
 
+
+    /**
+     * @var bool demand to register the user card
+     */
+    protected $register_user_card = false;
+
     /**
      * Create a new manager instance.
      *
@@ -140,7 +146,7 @@ class LaravelHyperpay implements Hyperpay
         $this->config['merchantTransactionId'] = $this->token;
         $this->config['userAgent'] = $request->server('HTTP_USER_AGENT');
         $result = (new HttpClient($this->client, $this->gateway_url.'/v1/checkouts', $this->config))->post(
-            $parameters = (new HttpParameters())->postParams(Arr::get($trackable_data, 'amount'), $user, $this->config, $this->billing)
+            $parameters = (new HttpParameters())->postParams(Arr::get($trackable_data, 'amount'), $user, $this->config, $this->billing, $this->register_user_card)
         );
 
         $response = (new HttpResponse($result, null, $parameters))
@@ -175,6 +181,20 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
+     *
+     */
+    public function recurringPayment(string $registration_id, $amount, $checkout_id)
+    {
+        $result = (new HttpClient($this->client, $this->gateway_url.'/v1/registrations/'.$registration_id.'/payments', $this->config))->post(
+            (new HttpParameters())->postRecurringPayment($amount, $this->redirect_url, $checkout_id),
+        );
+        
+        $response = (new HttpResponse($result, null, []))->recurringPayment();
+
+        return $response;
+    }
+
+    /**
      * Add merchantTransactionId.
      *
      * @param  string  $id
@@ -196,6 +216,18 @@ class LaravelHyperpay implements Hyperpay
     public function addRedirectUrl($url)
     {
         $this->redirect_url = $url;
+
+        return $this;
+    }
+
+    /**
+     * Set the register user card information, to use it when we prepare the checkout
+     *
+     * @return $this
+     */
+    public function registerUserCard()
+    {
+        $this->register_user_card = true;
 
         return $this;
     }

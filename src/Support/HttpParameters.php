@@ -17,10 +17,12 @@ class HttpParameters
      * @param  \Devinweb\LaravelHyperpay\Contracts\BillingInterface  $billing
      * @return array
      */
-    public function postParams($amount, $user, $heyPerPayConfig, $billing): array
+    public function postParams($amount, $user, $heyPerPayConfig, $billing, $register_user): array
     {
         $body = $this->getBodyParameters($amount, $user, $heyPerPayConfig);
-
+        if ($register_user) {
+            $body = array_merge($body, $this->registerPaymentData());
+        }
         $billing_parameters = $this->getBillingParameters($billing);
 
         $parameters = array_merge($body, $billing_parameters);
@@ -39,6 +41,28 @@ class HttpParameters
         $entityId = $this->getEntityId($checkout_id);
 
         return ['entityId' => $entityId];
+    }
+
+    /**
+     * Generate the params that used in the recurring payment
+     * @param string $amount
+     * @param string $shopperResultUrl
+     * @param string $checkout_id That define the entity_id related to the registration id.
+     * @return array
+     */
+    public function postRecurringPayment($amount, $shopperResultUrl, $checkout_id)
+    {
+        $currency = config('hyperpay.currency');
+
+        return array_merge([
+            "standingInstruction.mode"=>"REPEATED",
+            "standingInstruction.type" => "RECURRING",
+            "standingInstruction.source"=>"MIT",
+            "amount"=> $amount,
+            "currency" => $currency,
+            "paymentType"=>"PA",
+            "shopperResultUrl" => $shopperResultUrl
+        ], $this->getParams($checkout_id));
     }
 
     /**
@@ -68,6 +92,20 @@ class HttpParameters
 
 
         return $body_parameters;
+    }
+
+    /**
+     * The init recurring payment params
+     * @return array
+     */
+    protected function registerPaymentData()
+    {
+        return [
+            "standingInstruction.mode"=>"INITIAL",
+            "standingInstruction.type" => "RECURRING",
+            "standingInstruction.source"=>"CIT",
+            "createRegistration"=>true,
+        ];
     }
 
     /**

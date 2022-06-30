@@ -90,7 +90,6 @@ class HttpParameters
             'customer.browser.language' => config('app.locale'),
         ];
 
-
         return $body_parameters;
     }
 

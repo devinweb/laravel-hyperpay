@@ -47,7 +47,6 @@ class LaravelHyperpay implements Hyperpay
      */
     protected $gateway_url = 'https://test.oppwa.com';
 
-
     /**
      * @var bool demand to register the user card
      */
@@ -180,15 +179,12 @@ class LaravelHyperpay implements Hyperpay
         return $response;
     }
 
-    /**
-     *
-     */
     public function recurringPayment(string $registration_id, $amount, $checkout_id)
     {
         $result = (new HttpClient($this->client, $this->gateway_url.'/v1/registrations/'.$registration_id.'/payments', $this->config))->post(
             (new HttpParameters())->postRecurringPayment($amount, $this->redirect_url, $checkout_id),
         );
-        
+
         $response = (new HttpResponse($result, null, []))->recurringPayment();
 
         return $response;
@@ -221,7 +217,7 @@ class LaravelHyperpay implements Hyperpay
     }
 
     /**
-     * Set the register user card information, to use it when we prepare the checkout
+     * Set the register user card information, to use it when we prepare the checkout.
      *
      * @return $this
      */

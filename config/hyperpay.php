@@ -29,5 +29,5 @@ return [
      */
     'transaction_model' => 'Devinweb\LaravelHyperpay\Models\Transaction',
 
-    'notificationUrl' => '/hyperpay/webhook'
+    'notificationUrl' => '/hyperpay/webhook',
 ];

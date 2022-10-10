@@ -44,10 +44,11 @@ class HttpParameters
     }
 
     /**
-     * Generate the params that used in the recurring payment
-     * @param string $amount
-     * @param string $shopperResultUrl
-     * @param string $checkout_id That define the entity_id related to the registration id.
+     * Generate the params that used in the recurring payment.
+     *
+     * @param  string  $amount
+     * @param  string  $shopperResultUrl
+     * @param  string  $checkout_id  That define the entity_id related to the registration id.
      * @return array
      */
     public function postRecurringPayment($amount, $shopperResultUrl, $checkout_id)
@@ -55,13 +56,13 @@ class HttpParameters
         $currency = config('hyperpay.currency');
 
         return array_merge([
-            "standingInstruction.mode"=>"REPEATED",
-            "standingInstruction.type" => "RECURRING",
-            "standingInstruction.source"=>"MIT",
-            "amount"=> $amount,
-            "currency" => $currency,
-            "paymentType"=>"PA",
-            "shopperResultUrl" => $shopperResultUrl
+            'standingInstruction.mode'=>'REPEATED',
+            'standingInstruction.type' => 'RECURRING',
+            'standingInstruction.source'=>'MIT',
+            'amount'=> $amount,
+            'currency' => $currency,
+            'paymentType'=>'PA',
+            'shopperResultUrl' => $shopperResultUrl,
         ], $this->getParams($checkout_id));
     }
 
@@ -92,16 +93,17 @@ class HttpParameters
     }
 
     /**
-     * The init recurring payment params
+     * The init recurring payment params.
+     *
      * @return array
      */
     protected function registerPaymentData()
     {
         return [
-            "standingInstruction.mode"=>"INITIAL",
-            "standingInstruction.type" => "RECURRING",
-            "standingInstruction.source"=>"CIT",
-            "createRegistration"=>true,
+            'standingInstruction.mode'=>'INITIAL',
+            'standingInstruction.type' => 'RECURRING',
+            'standingInstruction.source'=>'CIT',
+            'createRegistration'=>true,
         ];
     }
 
